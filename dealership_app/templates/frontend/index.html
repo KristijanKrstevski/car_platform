@@ -1,25 +1,264 @@
 {% extends 'frontend/base.html' %}
 {% load static %}
-{% block title %}Home - Car Dealership{% endblock %}
+{% block title %}Premium Car Dealership - Find Your Perfect Vehicle{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Hero Section */
+  .hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 100px 0;
+    margin-top: -2rem;
+  }
+  
+  .hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+  
+  .hero-content p {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+  
+  /* Features Section */
+  .features-section {
+    padding: 80px 0;
+    background: #f8f9fa;
+  }
+  
+  .feature-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2rem;
+    color: white;
+  }
+  
+  /* Stats Section */
+  .stats-section {
+    background: #2c3e50;
+    color: white;
+    padding: 60px 0;
+  }
+  
+  .stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #3498db;
+  }
+  
+  /* Featured Cars */
+  .featured-section {
+    padding: 80px 0;
+  }
+  
+  .car-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .car-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
+  
+  .car-card img {
+    height: 250px;
+    object-fit: cover;
+  }
+  
+  .price-tag {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  
+  /* CTA Section */
+  .cta-section {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 80px 0;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-content h1 {
+      font-size: 2.5rem;
+    }
+    
+    .hero-content p {
+      font-size: 1.1rem;
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+    }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-  <div class="text-center mb-5">
-    <h1>Welcome to AutoWelt Clone</h1>
-    <p class="lead">Find your next car from our inventory.</p>
-    <a href="{% url 'frontend_vehicles' %}" class="btn btn-primary btn-lg">Browse Vehicles</a>
-  </div>
-  <!-- Featured Cars -->
-  <div class="row">
-    {% for car in featured_cars %}
-    <div class="col-md-4 mb-4">
-      <div class="card h-100">
-        <img src="{{ car.main_image.url }}" class="card-img-top" alt="{{ car.title }}">
-        <div class="card-body">
-          <h5 class="card-title">{{ car.brand.name }} {{ car.model_name.name }}</h5>
-          <p class="card-text">{{ car.display_price }}</p>
-          <a href="{% url 'frontend_vehicle_detail' car.pk %}" class="btn btn-outline-primary btn-sm">View Details</a>
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <div class="hero-content">
+          <h1>Find Your Perfect Car</h1>
+          <p>Discover premium vehicles from trusted brands. Quality, reliability, and excellence in every car we sell.</p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="{% url 'frontend_vehicles' %}" class="btn btn-light btn-lg px-4">Browse Inventory</a>
+            <a href="#featured" class="btn btn-outline-light btn-lg px-4">See Featured</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 text-center">
+        <div class="hero-image mt-4 mt-lg-0">
+          <i class="fas fa-car" style="font-size: 15rem; opacity: 0.3;"></i>
         </div>
       </div>
     </div>
-    {% endfor %}
   </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-12">
+        <h2 class="display-5 fw-bold mb-3">Why Choose Us</h2>
+        <p class="lead text-muted">Experience the difference with our premium service</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="text-center">
+          <div class="feature-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h4>Quality Guaranteed</h4>
+          <p class="text-muted">Every vehicle undergoes rigorous inspection to ensure top quality and reliability.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="text-center">
+          <div class="feature-icon">
+            <i class="fas fa-handshake"></i>
+          </div>
+          <h4>Trusted Service</h4>
+          <p class="text-muted">Years of experience and thousands of satisfied customers trust our expertise.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="text-center">
+          <div class="feature-icon">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
+          <h4>Best Prices</h4>
+          <p class="text-muted">Competitive pricing and financing options to fit every budget and need.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-number">500+</div>
+        <h5>Cars Sold</h5>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-number">98%</div>
+        <h5>Customer Satisfaction</h5>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-number">15+</div>
+        <h5>Years Experience</h5>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-number">50+</div>
+        <h5>Car Brands</h5>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Cars -->
+<section id="featured" class="featured-section">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-12">
+        <h2 class="display-5 fw-bold mb-3">Featured Vehicles</h2>
+        <p class="lead text-muted">Handpicked premium cars from our inventory</p>
+      </div>
+    </div>
+    <div class="row">
+      {% for car in featured_cars %}
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card car-card h-100">
+          <img src="{{ car.main_image.url }}" class="card-img-top" alt="{{ car.title }}">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ car.brand.name }} {{ car.model_name.name }}</h5>
+            <div class="mb-3">
+              <small class="text-muted">
+                <i class="fas fa-calendar-alt me-1"></i>{{ car.year }}
+                <i class="fas fa-road ms-3 me-1"></i>{{ car.get_mileage_display }}
+                <i class="fas fa-gas-pump ms-3 me-1"></i>{{ car.get_fuel_type_display }}
+              </small>
+            </div>
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              <span class="price-tag">{{ car.display_price }}</span>
+              <a href="{% url 'frontend_vehicle_detail' car.pk %}" class="btn btn-primary">View Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center">
+        <div class="py-5">
+          <i class="fas fa-car text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+          <h4 class="mt-3 text-muted">No featured cars available</h4>
+          <p class="text-muted">Check back soon for our latest inventory updates.</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% if featured_cars %}
+    <div class="text-center mt-5">
+      <a href="{% url 'frontend_vehicles' %}" class="btn btn-outline-primary btn-lg px-5">View All Vehicles</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="container text-center">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <h2 class="display-5 fw-bold mb-4">Ready to Find Your Dream Car?</h2>
+        <p class="lead mb-4">Browse our extensive inventory and discover the perfect vehicle for you today.</p>
+        <a href="{% url 'frontend_vehicles' %}" class="btn btn-light btn-lg px-5">Get Started Now</a>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}

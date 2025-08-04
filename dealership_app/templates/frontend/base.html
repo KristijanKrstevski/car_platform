@@ -30,40 +30,62 @@
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark shadow-lg" style="background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%); backdrop-filter: blur(10px);">
+  <!-- Modern Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm border-bottom">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="{% url 'frontend_index' %}" style="font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 600; color: #D4AF37; text-decoration: none;">
-        <i class="fas fa-crown me-3" style="font-size: 1.2rem;"></i>LUXE MOTORS
+      <a class="navbar-brand d-flex align-items-center" href="{% url 'frontend_index' %}" style="font-family: 'Poppins', sans-serif; font-size: 1.6rem; font-weight: 700; color: #E63946; text-decoration: none;">
+        <i class="fas fa-car me-2" style="font-size: 1.4rem;"></i>AutoWelt
       </a>
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
-        aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation" style="color: #D4AF37;">
+        aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link px-4 py-2" href="{% url 'frontend_vehicles' %}" style="color: #FFFFFF; font-weight: 500; font-size: 1.1rem; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.3s ease;">Collection</a>
+            <a class="nav-link px-3 py-2" href="{% url 'frontend_index' %}" style="color: #212529; font-weight: 500; transition: all 0.3s ease;">Дома</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link px-4 py-2" href="#" style="color: #FFFFFF; font-weight: 500; font-size: 1.1rem; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.3s ease;">Services</a>
+            <a class="nav-link px-3 py-2" href="{% url 'frontend_vehicles' %}" style="color: #212529; font-weight: 500; transition: all 0.3s ease;">Возила</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link px-4 py-2" href="#" style="color: #FFFFFF; font-weight: 500; font-size: 1.1rem; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.3s ease;">Contact</a>
+            <a class="nav-link px-3 py-2" href="#" style="color: #212529; font-weight: 500; transition: all 0.3s ease;">За нас</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3 py-2" href="#" style="color: #212529; font-weight: 500; transition: all 0.3s ease;">Контакт</a>
           </li>
         </ul>
+        <div class="d-flex align-items-center">
+          <a href="tel:+38970123456" class="btn btn-outline-primary me-2" style="border-color: #E63946; color: #E63946;">
+            <i class="fas fa-phone me-1"></i>+389 70 123 456
+          </a>
+          <a href="{% url 'frontend_vehicles' %}" class="btn btn-primary" style="background: #E63946; border-color: #E63946;">
+            Пребарај возила
+          </a>
+        </div>
       </div>
     </div>
   </nav>
   
   <style>
     .navbar-nav .nav-link:hover {
-      color: #D4AF37 !important;
+      color: #E63946 !important;
       transform: translateY(-1px);
     }
     
     .navbar-toggler:focus {
       box-shadow: none;
+    }
+    
+    .btn-outline-primary:hover {
+      background: #E63946 !important;
+      border-color: #E63946 !important;
+      color: white !important;
+    }
+    
+    .btn-primary:hover {
+      background: #D62828 !important;
+      border-color: #D62828 !important;
     }
   </style>
 
@@ -72,28 +94,104 @@
     {% block content %}{% endblock %}
   </main>
 
-  <!-- Footer -->
-  <footer class="text-white text-center py-5 mt-auto" style="background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%); border-top: 1px solid rgba(212, 175, 55, 0.2);">
-    <div class="container">
+  <!-- Modern Footer -->
+  <footer class="bg-light border-top mt-auto" style="background: #F8F9FA !important;">
+    <div class="container py-5">
       <div class="row">
-        <div class="col-lg-12">
-          <div class="mb-4">
-            <h4 style="font-family: 'Playfair Display', serif; color: #D4AF37; font-weight: 600; font-size: 1.8rem;">LUXE MOTORS</h4>
-            <p style="color: rgba(255,255,255,0.7); font-weight: 300; font-size: 1.1rem; margin-top: 1rem;">Where Excellence Meets Passion</p>
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="mb-3">
+            <h5 style="font-family: 'Poppins', sans-serif; font-weight: 700; color: #E63946; font-size: 1.4rem;">
+              <i class="fas fa-car me-2"></i>AutoWelt
+            </h5>
+            <p style="color: #6C757D; line-height: 1.6;">
+              Водечка компанија за продажба на квалитетни автомобили во Македонија. 
+              Веќе 15+ години ви помагаме да го најдете совршениот автомобил.
+            </p>
           </div>
-          <div class="mb-4">
-            <a href="#" class="text-decoration-none me-4" style="color: rgba(255,255,255,0.7); transition: color 0.3s ease;">
-              <i class="fab fa-facebook-f me-2"></i>Facebook
+          <div class="d-flex gap-3">
+            <a href="#" style="color: #6C757D; font-size: 1.3rem; transition: color 0.3s ease;">
+              <i class="fab fa-facebook-f"></i>
             </a>
-            <a href="#" class="text-decoration-none me-4" style="color: rgba(255,255,255,0.7); transition: color 0.3s ease;">
-              <i class="fab fa-instagram me-2"></i>Instagram  
+            <a href="#" style="color: #6C757D; font-size: 1.3rem; transition: color 0.3s ease;">
+              <i class="fab fa-instagram"></i>
             </a>
-            <a href="#" class="text-decoration-none me-4" style="color: rgba(255,255,255,0.7); transition: color 0.3s ease;">
-              <i class="fab fa-linkedin-in me-2"></i>LinkedIn
+            <a href="#" style="color: #6C757D; font-size: 1.3rem; transition: color 0.3s ease;">
+              <i class="fab fa-youtube"></i>
+            </a>
+            <a href="#" style="color: #6C757D; font-size: 1.3rem; transition: color 0.3s ease;">
+              <i class="fab fa-linkedin-in"></i>
             </a>
           </div>
-          <hr style="border-color: rgba(212, 175, 55, 0.3); margin: 2rem 0;">
-          <p style="color: rgba(255,255,255,0.5); font-weight: 300; margin: 0;">&copy; {{ now.year }} Luxe Motors. Crafted with Excellence.</p>
+        </div>
+        
+        <div class="col-lg-2 col-md-6 mb-4">
+          <h6 style="font-weight: 600; color: #212529; margin-bottom: 20px;">Линкови</h6>
+          <ul class="list-unstyled">
+            <li class="mb-2">
+              <a href="{% url 'frontend_index' %}" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Дома</a>
+            </li>
+            <li class="mb-2">
+              <a href="{% url 'frontend_vehicles' %}" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Возила</a>
+            </li>
+            <li class="mb-2">
+              <a href="#" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">За нас</a>
+            </li>
+            <li class="mb-2">
+              <a href="#" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Контакт</a>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+          <h6 style="font-weight: 600; color: #212529; margin-bottom: 20px;">Услуги</h6>
+          <ul class="list-unstyled">
+            <li class="mb-2">
+              <a href="#" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Купување автомобил</a>
+            </li>
+            <li class="mb-2">
+              <a href="#" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Продажба автомобил</a>
+            </li>
+            <li class="mb-2">
+              <a href="#" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Финансирање</a>
+            </li>
+            <li class="mb-2">
+              <a href="#" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Проценка</a>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+          <h6 style="font-weight: 600; color: #212529; margin-bottom: 20px;">Контакт</h6>
+          <div class="mb-3">
+            <div class="d-flex align-items-center mb-2">
+              <i class="fas fa-phone text-primary me-2" style="color: #E63946 !important;"></i>
+              <span style="color: #6C757D;">+389 70 123 456</span>
+            </div>
+            <div class="d-flex align-items-center mb-2">
+              <i class="fas fa-envelope text-primary me-2" style="color: #E63946 !important;"></i>
+              <span style="color: #6C757D;">info@autowelt.mk</span>
+            </div>
+            <div class="d-flex align-items-start">
+              <i class="fas fa-map-marker-alt text-primary me-2 mt-1" style="color: #E63946 !important;"></i>
+              <span style="color: #6C757D;">ул. Македонија 123<br>1000 Скопје, Македонија</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <hr style="border-color: #DEE2E6; margin: 2rem 0;">
+      
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <p style="color: #6C757D; margin: 0; font-size: 0.9rem;">
+            &copy; {{ now.year }} AutoWelt. Сите права задржани.
+          </p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <div class="d-flex justify-content-md-end gap-4 mt-3 mt-md-0">
+            <a href="#" style="color: #6C757D; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Приватност</a>
+            <a href="#" style="color: #6C757D; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Услови</a>
+          </div>
         </div>
       </div>
     </div>
@@ -101,7 +199,12 @@
   
   <style>
     footer a:hover {
-      color: #D4AF37 !important;
+      color: #E63946 !important;
+    }
+    
+    footer .fab:hover {
+      color: #E63946 !important;
+      transform: translateY(-2px);
     }
   </style>
 

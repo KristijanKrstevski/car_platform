@@ -1,0 +1,255 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}Vehicles - Car Dealership{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+  <div class="horizontal-red-line-full-width"></div>
+  <div class="bg-white shadow p-3 p-md-4 mx-md-2">
+
+    <!-- Mobile toggle -->
+    <button class="btn btn-primary w-100 d-md-none mb-3"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#filterPanel"
+            aria-expanded="true"
+            aria-controls="filterPanel">
+      Сокриј Филтри <i class="fa fa-caret-up"></i>
+    </button>
+
+    <div id="filterPanel" class="collapse d-md-block show">
+      <div class="fs-5 text-primary text-uppercase fw-bold mb-3">
+        {{ cars.paginator.count }} Достапни возила
+      </div>
+
+      <form method="get" novalidate>
+        <div class="row g-3">
+          <!-- Brand -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <select name="brand" id="brand" class="form-select">
+              <option value="">Марка</option>
+              {% for b in brands %}
+              <option value="{{ b.id }}"
+                      {% if request.GET.brand == b.id|stringformat:"s" %}selected{% endif %}>
+                {{ b.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Model (AJAX) -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <select name="model_name" id="model_name" class="form-select"
+                    {% if not request.GET.brand %}disabled{% endif %}>
+              <option value="">Модел</option>
+              {% for m in models %}
+              <option value="{{ m.id }}"
+                      {% if request.GET.model_name == m.id|stringformat:"s" %}selected{% endif %}>
+                {{ m.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Transmission -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <select name="transmission" class="form-select">
+              <option value="">Менувач</option>
+              {% for key,label in transmission_choices %}
+              <option value="{{ key }}"
+                      {% if request.GET.transmission == key %}selected{% endif %}>
+                {{ label }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Body -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <select name="vehicle_body" class="form-select">
+              <option value="">Каросерија</option>
+              {% for key,label in vehicle_bodies %}
+              <option value="{{ key }}"
+                      {% if request.GET.vehicle_body == key %}selected{% endif %}>
+                {{ label }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Fuel -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <select name="fuel" class="form-select">
+              <option value="">Гориво</option>
+              {% for key,label in fuel_choices %}
+              <option value="{{ key }}"
+                      {% if request.GET.fuel == key %}selected{% endif %}>
+                {{ label }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Color -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <select name="color" class="form-select">
+              <option value="">Боја</option>
+              {% for key,label in colors %}
+              <option value="{{ key }}"
+                      {% if request.GET.color == key %}selected{% endif %}>
+                {{ label }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Cars ≤ 77 kW -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="checkbox" id="forBeginners"
+                     name="for_beginners"
+                     {% if request.GET.for_beginners %}checked{% endif %}>
+              <label class="form-check-label" for="forBeginners">
+                Автомобили за почетници
+              </label>
+            </div>
+          </div>
+
+          <!-- Sort: Price -->
+          <div class="col-6 col-sm-4 col-md-3">
+            <select name="sort_price" class="form-select">
+              <option value="">Цена</option>
+              <option value="asc"  {% if request.GET.sort_price == 'asc'  %}selected{% endif %}>Ниска→Висока</option>
+              <option value="desc" {% if request.GET.sort_price == 'desc' %}selected{% endif %}>Висока→Ниска</option>
+            </select>
+          </div>
+
+          <!-- Sort: Mileage -->
+          <div class="col-6 col-sm-4 col-md-3">
+            <select name="sort_mileage" class="form-select">
+              <option value="">Километража</option>
+              <option value="asc"  {% if request.GET.sort_mileage == 'asc'  %}selected{% endif %}>Малку→Многу</option>
+              <option value="desc" {% if request.GET.sort_mileage == 'desc' %}selected{% endif %}>Многу→Малку</option>
+            </select>
+          </div>
+
+          <!-- Sort: Year -->
+          <div class="col-6 col-sm-4 col-md-3">
+            <select name="sort_year" class="form-select">
+              <option value="">Година</option>
+              <option value="asc"  {% if request.GET.sort_year == 'asc'  %}selected{% endif %}>Стара→Нова</option>
+              <option value="desc" {% if request.GET.sort_year == 'desc' %}selected{% endif %}>Нова→Стара</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="row mt-4">
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary px-4">Примени</button>
+            <a href="{% url 'frontend_vehicles' %}"
+               class="btn btn-outline-secondary px-4 ms-2">Ресетирај</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Listing -->
+<section class="mb-5">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+    {% for car in cars %}
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="{{ car.main_image.url }}"
+             class="card-img-top"
+             alt="{{ car.title }}">
+
+        <!-- Icons row -->
+        <hr>
+        <div class="d-flex justify-content-around align-items-center py-2 border-top">
+          <!-- Year -->
+          <div class="text-center">
+            <img src="{% static 'calendar.png' %}" alt="Year" width="36" height="36">
+            <div class="small">{{ car.year }}</div>
+          </div>
+          <!-- Transmission -->
+          <div class="text-center">
+            <img src="{% static 'manual-transmission.png' %}" alt="Transmission" width="36" height="36">
+            <div class="small">{{ car.get_transmission_display }}</div>
+          </div>
+          <!-- Fuel -->
+          <div class="text-center">
+            <img src="{% static 'gas-station.png' %}" alt="Fuel" width="36" height="36">
+            <div class="small">{{ car.get_fuel_type_display }}</div>
+          </div>
+          <!-- Mileage -->
+          <div class="text-center">
+            <img src="{% static 'mileage.png' %}" alt="Mileage" width="36" height="36">
+            <div class="small">{{ car.get_mileage_display }}</div>
+          </div>
+        </div>
+<hr>
+        <div class="card-body d-flex flex-column text-center">
+          <!-- Centered Title -->
+          <h5 class="card-title">{{ car.title }}</h5>
+          <!-- Centered, Bold Price -->
+          <p class="card-text fw-bold fs-4 text-primary mb-4">
+           {{ car.display_price }}
+          </p>
+          <a href="{% url 'frontend_vehicle_detail' car.pk %}"
+             class="mt-auto btn btn-outline-primary btn-sm">
+            Види повеќе
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  <nav class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% if cars.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ cars.previous_page_number }}">Previous</a>
+      </li>
+      {% endif %}
+      {% for num in cars.paginator.page_range %}
+      <li class="page-item {% if cars.number == num %}active{% endif %}">
+        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+      </li>
+      {% endfor %}
+      {% if cars.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ cars.next_page_number }}">Next</a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// AJAX to reload #model_name on brand change (unchanged)
+document.getElementById('brand').addEventListener('change', function(){
+  const id = this.value, sel = document.getElementById('model_name');
+  sel.disabled = !id;
+  if(!id){ sel.innerHTML = '<option value="">Модел</option>'; return; }
+  fetch(`{% url 'ajax_models' %}?brand=${id}`)
+    .then(r=>r.json())
+    .then(data=>{
+      sel.innerHTML = '<option value="">Модел</option>';
+      data.forEach(m=> {
+        const o = document.createElement('option');
+        o.value = m.id; o.textContent = m.name;
+        if(String(m.id)==="{{ request.GET.model_name }}") o.selected=true;
+        sel.append(o);
+      });
+    });
+});
+</script>
+{% endblock %}

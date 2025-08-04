@@ -1,0 +1,18 @@
+Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+DirectoryIndex wsgi.py
+AddHandler cgi-script .py
+
+RewriteEngine On
+
+# Handle static files first
+RewriteCond %{REQUEST_URI} ^/static/(.*)$
+RewriteRule ^static/(.*)$ /staticfiles/$1 [L]
+
+# Handle media files
+RewriteCond %{REQUEST_URI} ^/media/(.*)$
+RewriteRule ^media/(.*)$ /media/$1 [L]
+
+# Route everything else to Django through WSGI
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /wsgi.py [QSA,L]

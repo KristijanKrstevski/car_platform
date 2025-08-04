@@ -1,0 +1,25 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+{% block title %}Home - Car Dealership{% endblock %}
+{% block content %}
+  <div class="text-center mb-5">
+    <h1>Welcome to AutoWelt Clone</h1>
+    <p class="lead">Find your next car from our inventory.</p>
+    <a href="{% url 'frontend_vehicles' %}" class="btn btn-primary btn-lg">Browse Vehicles</a>
+  </div>
+  <!-- Featured Cars -->
+  <div class="row">
+    {% for car in featured_cars %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <img src="{{ car.main_image.url }}" class="card-img-top" alt="{{ car.title }}">
+        <div class="card-body">
+          <h5 class="card-title">{{ car.brand.name }} {{ car.model_name.name }}</h5>
+          <p class="card-text">{{ car.display_price }}</p>
+          <a href="{% url 'frontend_vehicle_detail' car.pk %}" class="btn btn-outline-primary btn-sm">View Details</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% endblock %}

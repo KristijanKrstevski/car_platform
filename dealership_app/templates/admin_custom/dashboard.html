@@ -1,0 +1,51 @@
+{% extends "admin_custom/base_admin.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1 class="mb-4">Admin Dashboard</h1>
+
+<div class="row mb-4">
+  <div class="col-md-2"><div class="card p-3 shadow-sm">
+      <h6>Вкупно возила</h6><h2>{{ total_cars }}</h2>
+  </div></div>
+  <div class="col-md-2"><div class="card p-3 shadow-sm">
+      <h6>Продадени</h6><h2>{{ total_sold }}</h2>
+  </div></div>
+  <div class="col-md-2"><div class="card p-3 shadow-sm">
+      <h6>Просечна цена (€)</h6><h2>{{ avg_price }}</h2>
+  </div></div>
+  <div class="col-md-2"><div class="card p-3 shadow-sm">
+      <h6>Просечна продадена цена (€)</h6><h2>{{ avg_price_sold }}</h2>
+  </div></div>
+  <div class="col-md-2"><div class="card p-3 shadow-sm">
+      <h6>Инвентарна вредност (€)</h6><h2>{{ inventory_value }}</h2>
+  </div></div>
+  <div class="col-md-2"><div class="card p-3 shadow-sm">
+      <h6>Цена/година (€)</h6><h2>{{ avg_price_per_year }}</h2>
+  </div></div>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="card p-2 shadow-sm">
+      <h6>Распределба по гориво</h6>
+      <canvas id="fuelPieChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Pie chart за fuel_type
+  new Chart(document.getElementById('fuelPieChart'), {
+    type: 'pie',
+    data: {
+      labels: {{ fuel_labels|safe }},
+      datasets: [{
+        data: {{ fuel_counts|safe }},
+        borderWidth: 1
+      }]
+    }
+  });
+</script>
+{% endblock %}

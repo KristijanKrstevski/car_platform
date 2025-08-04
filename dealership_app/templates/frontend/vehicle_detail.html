@@ -1,0 +1,311 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}
+  {{ car.title }} – Детали
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Заглавје */
+  .car-title {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0.75rem;
+  }
+  .car-price {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0d6efd;
+    text-align: center;
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 2px solid #ddd; /* Линија под цената */
+  }
+
+  /* Карусел */
+  #carCarousel {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  /* Thumbnails */
+  .thumbs {
+    overflow-x: auto;
+    white-space: nowrap;
+    margin-top: 0.75rem;
+    padding-bottom: 0.25rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .thumbs img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    border-radius: 0.25rem;
+    border: 2px solid transparent;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .thumbs img.active,
+  .thumbs img:hover {
+    transform: scale(1.1);
+    border-color: #0d6efd;
+  }
+
+  /* Спецификации */
+  .specifications-title {
+    font-weight: 700;
+    font-size: 1.5rem;
+    border-bottom: 3px solid #0d6efd;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: #0d6efd;
+    text-align: center;
+  }
+  .specifications-row {
+    background: #fff;
+    border-radius: 0.5rem;
+    padding: 1rem 1rem 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Desktop default 4 колони */
+    gap: 1rem 0.5rem;
+    justify-items: center;
+    text-align: center;
+  }
+  @media (max-width: 991.98px) {
+    .specifications-row {
+      grid-template-columns: repeat(3, 1fr); /* Tablet 3 колони */
+    }
+  }
+  @media (max-width: 767.98px) {
+    .specifications-row {
+      grid-template-columns: repeat(2, 1fr); /* Телефон 2 колони */
+    }
+  }
+  .spec {
+    padding: 0.75rem 0.5rem;
+  }
+  .spec img {
+    height: 35px;
+    margin-bottom: 0.5rem;
+    filter: grayscale(20%);
+  }
+  .spec div {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.15rem;
+    color: #333;
+  }
+  .spec small {
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  /* Опрема */
+  .equipment-title {
+    font-weight: 700;
+    font-size: 1.5rem;
+    border-bottom: 3px solid #0d6efd;
+    margin-bottom: 1rem;
+    color: #0d6efd;
+    text-align: center;
+  }
+.equipment-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Desktop default 3 колони */
+  gap: 0.0rem 0.1rem;  /* Намален простор помеѓу */
+  padding: 0;
+  justify-items: center;
+}
+  @media (max-width: 991.98px) {
+    .equipment-row {
+      grid-template-columns: repeat(2, 1fr); /* Tablet 2 колони */
+    }
+  }
+  @media (max-width: 767.98px) {
+    .equipment-row {
+      grid-template-columns: repeat(1, 1fr); /* Телефон 1 колона */
+    }
+  }
+  .equipment-col {
+    background: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    color: #444;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+    text-align: center;
+  }
+
+  /* Редослед и layout */
+  .detail-main {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 1rem;
+  }
+
+  .top-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .car-info {
+    flex: 1 1 600px;
+    min-width: 320px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bottom-section {
+    width: 100%;
+  }
+
+  /* Слики полни и со carousel */
+.carousel-inner img {
+  max-width: 100%;      /* Нека сликата се намалува ако е поширока од контејнер */
+  max-height: 1000px;   /* Максимална висина */
+  height: auto;         /* Задржи пропорции */
+  object-fit: contain;  /* Прикажи целата слика внатре без сечење */
+  margin-left: auto;
+  margin-right: auto;
+  display: block;       /* Центрирање */
+}
+
+  /* Responsive Adjustments */
+  @media (max-width: 991.98px) {
+    .car-info {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .car-title {
+      font-size: 1.6rem;
+    }
+    .car-price {
+      font-size: 1.4rem;
+    }
+    .carousel-inner img {
+      max-height: 250px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-main">
+
+  <!-- Горен дел: Име, Карусел, Цена -->
+  <section class="top-section">
+    <div class="car-info">
+      <h1 class="car-title">{{ car.title }}</h1>
+
+      <div id="carCarousel" class="carousel slide w-100" data-bs-ride="carousel">
+        <div class="carousel-inner rounded shadow-sm">
+          {% for img in car.images.all %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <img src="{{ img.image.url }}" class="d-block w-100" alt="{{ car.title }}">
+            </div>
+          {% empty %}
+            <div class="carousel-item active">
+              <img src="{% static 'img/placeholder-car.png' %}" class="d-block w-100" alt="No image">
+            </div>
+          {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+
+      <div class="thumbs mt-3 w-100 d-flex justify-content-center">
+        {% for img in car.images.all %}
+          <img src="{{ img.image.url }}" data-bs-target="#carCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+               class="{% if forloop.first %}active{% endif %} rounded" alt="Thumbnail {{ forloop.counter }}">
+        {% endfor %}
+      </div>
+
+      <div class="car-price w-100 mt-3">{{ car.display_price }}</div>
+    </div>
+  </section>
+
+  <!-- Долен дел: Спецификации и Опрема -->
+  <section class="bottom-section">
+    <h3 class="specifications-title">Спецификации</h3>
+    <div class="specifications-row">
+       <div class="spec">
+        <img src="{% static 'setting.png' %}" alt="Марка и Модел" loading="lazy" />
+        <div>{{ car.brand.name }} {{ car.model_name.name }}</div>
+        <small>Марка / Модел</small>
+      </div>
+      <div class="spec">
+        <img src="{% static 'calendar.png' %}" alt="Година" loading="lazy" />
+        <div>{{ car.year }}</div>
+        <small>Година</small>
+      </div>
+      <div class="spec">
+        <img src="{% static 'mileage.png' %}" alt="Километража" loading="lazy" />
+        <div>{{ car.get_mileage_display }}</div>
+        <small>Километража</small>
+      </div>
+      <div class="spec">
+        <img src="{% static 'gas-station.png' %}" alt="Гориво" loading="lazy" />
+        <div>{{ car.get_fuel_type_display }}</div>
+        <small>Гориво</small>
+      </div>
+      <div class="spec">
+        <img src="{% static 'manual-transmission.png' %}" alt="Менувач" loading="lazy" />
+        <div>{{ car.get_transmission_display }}</div>
+        <small>Менувач</small>
+      </div>
+      <div class="spec">
+        <img src="{% static 'car-engine.png' %}" alt="Мотор" loading="lazy" />
+        <div>{{ car.engine_capacity }} cm³</div>
+        <small>Мотор</small>
+      </div>
+      <div class="spec">
+        <img src="{% static 'palette.png' %}" alt="Боја" loading="lazy" />
+        <div>{{ car.get_color_display }}</div>
+        <small>Боја</small>
+      </div>
+      <div class="spec">
+        <img src="{% static 'sedan.png' %}" alt="Каросерија" loading="lazy" />
+        <div>{{ car.get_body_type_display }}</div>
+        <small>Каросерија</small>
+      </div>
+    </div>
+
+    {% if car.equipment.exists %}
+      <h4 class="equipment-title">Опрема</h4>
+      <div class="equipment-row">
+        {% for eq in car.equipment.all %}
+          <div class="equipment-col">{{ eq.name }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+
+</div>
+{% endblock %}

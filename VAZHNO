@@ -1,0 +1,51 @@
+
+
+# vo home page sekoja kartichka posebno da e pokazhana so da imam "model na avtomobil","godina proizvodstvo","menuvach","gorivo"
+
+
+#2. СОРТИРАЊЕР СПОРЕД ova da bide eden filter kako button za sortiranje
+mozhe da se izbere samo edno od ovie
+# cena ,kilometrazha,created by,godina na proizvodstvo,, accedning decending
+# Цена(растечка)
+# Цена (опаѓачка)
+# Најнова(tuka se misli na yaer
+# Најново внесена( se misli na created by)
+
+
+#3.ФИЛТРИРАЊЕ
+
+#3.1 za sekoj od ovie da ima dva izbora od do(primer: cena od, cena do) ovie raboti sakam da bidat kako select drop down i da bidat so dobar grid i da se izbere se kako shto treba
+#  da pishuva oberete marka =?marka ->posle model koja da pishuva odberete mode=>>>>>>> modelot da ne se izbira kako dopolnitelno pole tuku da bide napishano kako vo autowelt tie za benzin dizel
+# cena (Цена (€) Од - Цена (€) До
+#kilometri ( км од- км до)
+#godina na proizvodstvo( Година Од - Година До)
+#kilowati( KW  од - KW до)
+
+#3.2 tuka samo eden izbor kako drop down
+#menuvach na kolata da se izbere samo eden menuvach( Одберете менувач)
+#Одберете гориво
+#Одберете регистрација
+#kje treba da ima i vakvo neshto   karoserija (site karoserii na voziloto da se naredat kako tekst + slikika(ikona od takva karoserija) ama zasega kje ostane samo tekstot odnosno value od toa shto kje bide prevzemeno) i da mozhe da se izbere samo edna ama sega za sega) kako drop down kje bidat izlistani i kje mozhe da se izbere od niv i kje mozhe samo edno da se izbere ako ne se izbere znachi se podrazbira site ako
+
+
+
+
+otvori ja stranicata i tuka vnesi brednoci kako opel voltwagen,audi,pezho,mercedes,toyota
+
+https://automarketplace.mk/
+
+kako shto skrola toa neshto taka da ima jako e u loop vrtat znakchinjata na kolite
+
+
+
+
+
+i dali mozhe da se limitira slika nekoja za da ne zafakja pogolema memorija? nekoja komresija
+
+
+
+da se proveri dali dobro raboti
+
+
+
+https://www.flaticon.com/authors/freepik

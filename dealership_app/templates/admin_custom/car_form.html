@@ -1,0 +1,340 @@
+{% extends "admin_custom/base_admin.html" %}
+{% block title %}{% if car %}Edit Car{% else %}Add Car{% endif %}{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    .form-section {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+    .form-section h5 {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 15px;
+    }
+    .img-preview {
+        width: 120px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+    /* ✅ Dual list equipment */
+    .dual-list {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+    }
+    .dual-list select {
+    width: 100%;
+    min-height: 250px;
+    font-size: 1.2rem;
+    padding: 10px;
+}
+
+    .dual-list option {
+        padding: 12px 8px;
+        font-size: 1.2rem;
+    }
+    .dual-list-buttons {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+    }
+    @media (max-width: 768px) {
+        .dual-list {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        #available-equipment {
+            order: 1;
+        }
+        .dual-list-buttons {
+            order: 2;
+            flex-direction: row;
+            justify-content: center;
+        }
+        #selected-equipment {
+            order: 3;
+        }
+        .dual-list > .d-flex {
+            width: 100% !important;
+  }
+    }
+    input, select, textarea {
+        border-radius: 6px !important;
+        font-size: 1rem !important;
+        padding: 10px !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+        <h1 class="text-primary">
+            <i class="bi bi-car-front"></i> {% if car %}Edit Car{% else %}Add Car{% endif %}
+        </h1>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- ✅ BASIC INFO -->
+        <div class="form-section">
+            <h5><i class="bi bi-info-circle"></i> Basic Information</h5>
+            <div class="row g-3">
+                <div class="col-md-6">{{ form.title.label_tag }}{{ form.title }}</div>
+                <div class="col-md-6">{{ form.price.label_tag }}{{ form.price }}</div>
+                <div class="col-md-6">{{ form.brand.label_tag }}{{ form.brand }}</div>
+                <div class="col-md-6">{{ form.model_name.label_tag }}{{ form.model_name }}</div>
+                <div class="col-md-6">{{ form.year.label_tag }}{{ form.year }}</div>
+                <div class="col-md-6">{{ form.color.label_tag }}{{ form.color }}</div>
+                <div class="col-12">{{ form.description.label_tag }} {{ form.description }}</div>
+                <div class="col-md-6 d-flex align-items-center">{{ form.sold }}<label for="{{ form.sold.id_for_label }}" class="ms-2">{{ form.sold.label }}</label></div>
+            </div>
+        </div>
+
+        <!-- ✅ DETAILS -->
+        <div class="form-section">
+            <h5><i class="bi bi-gear"></i> Car Details</h5>
+            <div class="row g-3">
+                <div class="col-md-4">{{ form.transmission.label_tag }}{{ form.transmission }}</div>
+                <div class="col-md-4">{{ form.fuel_type.label_tag }}{{ form.fuel_type }}</div>
+                <div class="col-md-4">{{ form.body_type.label_tag }}{{ form.body_type }}</div>
+                <div class="col-md-4">{{ form.engine_capacity.label_tag }}{{ form.engine_capacity }}</div>
+                <div class="col-md-4">{{ form.kilowatts.label_tag }}{{ form.kilowatts }}</div>
+                <div class="col-md-4">{{ form.seats.label_tag }}{{ form.seats }}</div>
+                <div class="col-md-4">{{ form.registration_type.label_tag }}{{ form.registration_type }}</div>
+                <div class="col-md-4">{{ form.mileage.label_tag }} {{ form.mileage }}</div>
+            </div>
+        </div>
+
+        <!-- ✅ EQUIPMENT (Dual List) -->
+        <div class="form-section">
+            <h5><i class="bi bi-tools"></i> Equipment</h5>
+            <div class="dual-list">
+                <div class="d-flex flex-column" style="width:48%">
+                    <button type="button" class="btn btn-sm btn-outline-primary mb-2" id="select-all-left">Select All</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mb-2" id="unselect-all-left">Unselect All</button>
+                    <select id="available-equipment" multiple class="form-select">
+                        {% for eq in all_equipment %}
+                            {% if eq not in selected_equipment %}
+                                <option value="{{ eq.id }}">{{ eq.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="dual-list-buttons">
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="add-equipment">&gt;&gt;</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="remove-equipment">&lt;&lt;</button>
+                </div>
+                <div class="d-flex flex-column" style="width:48%">
+                    <button type="button" class="btn btn-sm btn-outline-primary mb-2" id="select-all-right">Select All</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mb-2" id="unselect-all-right">Unselect All</button>
+                    <select id="selected-equipment" name="equipment" multiple class="form-select">
+                        {% for eq in selected_equipment %}
+                            <option value="{{ eq.id }}">{{ eq.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <!-- ✅ MAIN IMAGE -->
+        <div class="form-section">
+            <h5><i class="bi bi-image"></i> Main Image</h5>
+            <div class="row">
+                      <div class="col-md-6">
+                    <label for="{{ form.main_image.id_for_label }}">{{ form.main_image.label }}</label>
+                    <input
+                        type="file"
+                        name="{{ form.main_image.name }}"
+                        id="{{ form.main_image.id_for_label }}"
+                        class="form-control"
+                        accept="image/*"
+                    >
+
+                    {% if car and car.main_image %}
+                        <img src="{{ car.main_image.url }}" class="img-preview mt-2">
+                    {% endif %}
+
+                    {% if form.main_image.errors %}
+                        <div class="text-danger">{{ form.main_image.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- ✅ IMAGES -->
+        <div class="form-section">
+            <h5><i class="bi bi-images"></i> Uploaded Images</h5>
+            <div class="d-flex flex-wrap gap-3 mb-3" id="image-container">
+                {% for img in images %}
+                <div class="text-center" id="img-{{ img.id }}">
+                    <img src="{{ img.image.url }}" class="img-preview">
+                    <button type="button" data-id="{{ img.id }}" class="btn btn-danger btn-sm mt-2 delete-image-btn">🗑 Delete</button>
+                </div>
+                {% empty %}
+                <p class="text-muted">No extra images uploaded.</p>
+                {% endfor %}
+            </div>
+
+            <h5 class="mt-3">Add New Images</h5>
+            {{ image_form.images }}
+        </div>
+
+        <!-- ✅ Save + Back Buttons -->
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <a href="{% url 'admin_car_list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+            <button type="submit" class="btn btn-success btn-lg">
+                ✅ Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const brandField  = document.getElementById("id_brand");
+  const modelField  = document.getElementById("id_model_name");
+  // grab whatever model is already selected ("" on a fresh add)
+  const preselect   = modelField.value;
+
+  function loadModels(brandId, selected=null) {
+    if (!brandId) {
+      modelField.disabled  = true;
+      modelField.innerHTML = '<option value="">Select brand first</option>';
+      return;
+    }
+    modelField.disabled  = true;
+    modelField.innerHTML = '<option>Loading…</option>';
+
+    fetch(`/ajax/load-models/?brand=${brandId}`)
+      .then(r => r.json())
+      .then(data => {
+        modelField.disabled  = false;
+        modelField.innerHTML = '<option value="">Choose a model</option>';
+        data.forEach(m => {
+          const o = document.createElement("option");
+          o.value       = m.id;
+          o.textContent = m.name;
+          if (selected && String(m.id) === String(selected)) {
+            o.selected = true;
+          }
+          modelField.append(o);
+        });
+      })
+      .catch(() => {
+        modelField.disabled  = true;
+        modelField.innerHTML = '<option>Error loading</option>';
+      });
+  }
+
+  // on page‐load: if brand is already chosen (i.e. in “edit”), populate & preselect
+  if (brandField.value) {
+    loadModels(brandField.value, preselect);
+  } else {
+    modelField.disabled  = true;
+    modelField.innerHTML = '<option value="">Select brand first</option>';
+  }
+
+  // whenever brand changes, repopulate (no preselect then)
+  brandField.addEventListener("change", e => {
+    loadModels(e.target.value);
+  });
+});
+
+
+    // ✅ Toggle selection + keep scroll
+    function enableToggle(selectId) {
+        const selectEl = document.getElementById(selectId);
+        selectEl.addEventListener("mousedown", function(e) {
+            if (e.target.tagName === "OPTION") {
+                e.preventDefault();
+                const scrollPos = selectEl.scrollTop;
+                e.target.selected = !e.target.selected;
+                setTimeout(() => selectEl.scrollTop = scrollPos, 0);
+            }
+        });
+    }
+    enableToggle("available-equipment");
+    enableToggle("selected-equipment");
+
+    // ✅ Move selected options
+    function moveOptions(fromId, toId) {
+        const from = document.getElementById(fromId);
+        const to = document.getElementById(toId);
+        [...from.options].forEach(option => {
+            if (option.selected) {
+                option.selected = false;
+                to.appendChild(option);
+            }
+        });
+    }
+    document.getElementById("add-equipment").onclick = () => moveOptions("available-equipment", "selected-equipment");
+    document.getElementById("remove-equipment").onclick = () => moveOptions("selected-equipment", "available-equipment");
+
+    // ✅ Double-click move instantly
+    document.getElementById("available-equipment").ondblclick = e => {
+        if (e.target.tagName === "OPTION") {
+            document.getElementById("selected-equipment").appendChild(e.target);
+        }
+    };
+    document.getElementById("selected-equipment").ondblclick = e => {
+        if (e.target.tagName === "OPTION") {
+            document.getElementById("available-equipment").appendChild(e.target);
+        }
+    };
+
+    // ✅ Select All / Unselect All
+    document.getElementById("select-all-left").onclick = () => {
+        for (let opt of document.getElementById("available-equipment").options) opt.selected = true;
+    };
+    document.getElementById("unselect-all-left").onclick = () => {
+        for (let opt of document.getElementById("available-equipment").options) opt.selected = false;
+    };
+    document.getElementById("select-all-right").onclick = () => {
+        for (let opt of document.getElementById("selected-equipment").options) opt.selected = true;
+    };
+    document.getElementById("unselect-all-right").onclick = () => {
+        for (let opt of document.getElementById("selected-equipment").options) opt.selected = false;
+    };
+
+    // ✅ Mark all selected equipment before submitting
+    document.querySelector("form").onsubmit = () => {
+        const selected = document.getElementById("selected-equipment");
+        for (let option of selected.options) option.selected = true;
+    };
+
+// ✅ AJAX Delete Image (No refresh) - FIXED
+document.querySelectorAll(".delete-image-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+        const imgId = this.getAttribute("data-id");
+        fetch(`/ajax/delete-car-image/${imgId}/`, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                "X-Requested-With": "XMLHttpRequest"  // ✅ FIXED HERE
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById(`img-${imgId}`).remove();
+                console.log(`✅ Deleted image #${imgId}, remaining: ${data.remaining}`);
+            } else {
+                alert("❌ Failed to delete image.");
+            }
+        })
+        .catch(err => console.error("AJAX Delete Error:", err));
+    });
+});
+
+</script>
+{% endblock %}

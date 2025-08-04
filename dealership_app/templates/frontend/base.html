@@ -31,34 +31,79 @@
 <body>
 
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+  <nav class="navbar navbar-expand-lg navbar-dark shadow-lg" style="background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%); backdrop-filter: blur(10px);">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="{% url 'frontend_index' %}">
-        <i class="fas fa-car me-2"></i>Premium Motors
+      <a class="navbar-brand d-flex align-items-center" href="{% url 'frontend_index' %}" style="font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 600; color: #D4AF37; text-decoration: none;">
+        <i class="fas fa-crown me-3" style="font-size: 1.2rem;"></i>LUXE MOTORS
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
-        aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+        aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation" style="color: #D4AF37;">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navMenu">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'frontend_vehicles' %}">Vehicles</a>
+            <a class="nav-link px-4 py-2" href="{% url 'frontend_vehicles' %}" style="color: #FFFFFF; font-weight: 500; font-size: 1.1rem; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.3s ease;">Collection</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-4 py-2" href="#" style="color: #FFFFFF; font-weight: 500; font-size: 1.1rem; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.3s ease;">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-4 py-2" href="#" style="color: #FFFFFF; font-weight: 500; font-size: 1.1rem; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.3s ease;">Contact</a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
+  
+  <style>
+    .navbar-nav .nav-link:hover {
+      color: #D4AF37 !important;
+      transform: translateY(-1px);
+    }
+    
+    .navbar-toggler:focus {
+      box-shadow: none;
+    }
+  </style>
 
   <!-- Main Content -->
-  <main class="container my-4">
+  <main>
     {% block content %}{% endblock %}
   </main>
 
   <!-- Footer -->
-  <footer class="bg-dark text-white text-center py-3 mt-auto">
-    &copy; {{ now.year }} Car Dealership. All rights reserved.
+  <footer class="text-white text-center py-5 mt-auto" style="background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%); border-top: 1px solid rgba(212, 175, 55, 0.2);">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="mb-4">
+            <h4 style="font-family: 'Playfair Display', serif; color: #D4AF37; font-weight: 600; font-size: 1.8rem;">LUXE MOTORS</h4>
+            <p style="color: rgba(255,255,255,0.7); font-weight: 300; font-size: 1.1rem; margin-top: 1rem;">Where Excellence Meets Passion</p>
+          </div>
+          <div class="mb-4">
+            <a href="#" class="text-decoration-none me-4" style="color: rgba(255,255,255,0.7); transition: color 0.3s ease;">
+              <i class="fab fa-facebook-f me-2"></i>Facebook
+            </a>
+            <a href="#" class="text-decoration-none me-4" style="color: rgba(255,255,255,0.7); transition: color 0.3s ease;">
+              <i class="fab fa-instagram me-2"></i>Instagram  
+            </a>
+            <a href="#" class="text-decoration-none me-4" style="color: rgba(255,255,255,0.7); transition: color 0.3s ease;">
+              <i class="fab fa-linkedin-in me-2"></i>LinkedIn
+            </a>
+          </div>
+          <hr style="border-color: rgba(212, 175, 55, 0.3); margin: 2rem 0;">
+          <p style="color: rgba(255,255,255,0.5); font-weight: 300; margin: 0;">&copy; {{ now.year }} Luxe Motors. Crafted with Excellence.</p>
+        </div>
+      </div>
+    </div>
   </footer>
+  
+  <style>
+    footer a:hover {
+      color: #D4AF37 !important;
+    }
+  </style>
 
   <!-- Bootstrap Bundle JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

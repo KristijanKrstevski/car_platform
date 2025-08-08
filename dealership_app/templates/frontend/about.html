@@ -1,0 +1,266 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}За нас - MoeAuto{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+  :root {
+    --primary-red: #E63946;
+    --primary-blue: #1D3557;
+    --accent-orange: #F77F00;
+    --light-gray: #F8F9FA;
+    --dark-gray: #212529;
+    --medium-gray: #6C757D;
+    --white: #FFFFFF;
+    --shadow: 0 4px 20px rgba(0,0,0,0.1);
+    --shadow-hover: 0 8px 30px rgba(0,0,0,0.15);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--light-gray);
+  }
+
+  /* Header */
+  .about-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-red) 100%);
+    color: var(--white);
+    padding: 40px 0;
+    margin-bottom: 30px;
+  }
+
+  .header-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .header-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  .about-section {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+  }
+
+  .section-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark-gray);
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .team-member {
+    transition: transform 0.3s ease;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+
+  .team-member:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, var(--primary-red) 0%, var(--accent-orange) 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .stat-number {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .mission-vision {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+  }
+
+  .mission-card {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-red) 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    height: 100%;
+    transition: transform 0.3s ease;
+  }
+
+  .vision-card {
+    background: linear-gradient(135deg, var(--primary-red) 0%, var(--accent-orange) 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    height: 100%;
+    transition: transform 0.3s ease;
+  }
+
+  .mission-card:hover,
+  .vision-card:hover {
+    transform: translateY(-5px);
+  }
+
+  @media (max-width: 768px) {
+    .header-title {
+      font-size: 2rem;
+    }
+    
+    .about-section,
+    .mission-vision {
+      padding: 20px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="about-header">
+  <div class="container text-center">
+    <h1 class="header-title">За MoeAuto</h1>
+    <p class="header-subtitle">Повеќе од 15 години искуство во продажба на квалитетни автомобили и професионална услуга</p>
+  </div>
+</section>
+
+<div class="container">
+
+<!-- About Story Section -->
+<section class="about-section">
+    <div class="row align-items-center mb-5">
+      <div class="col-lg-6">
+        <h2 class="display-5 fw-bold mb-4">Нашата Приказна</h2>
+        <p class="lead mb-4">MoeAuto е основана во 2008 година со цел да обезбеди најквалитетни автомобили на македонскиот пазар. Се специјализираме за увоз и продажба на автомобили од премиум класа.</p>
+        <p class="mb-4">Нашиот тим од стручни лица има богато искуство во автомобилската индустрија и се посветени на обезбедување на најдобрата можна услуга за нашите клиенти.</p>
+        <div class="row">
+          <div class="col-6">
+            <div class="stat-card">
+              <div class="stat-number">500+</div>
+              <p class="mb-0">Продадени возила</p>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="stat-card">
+              <div class="stat-number">15</div>
+              <p class="mb-0">Години искуство</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="text-center">
+          <i class="fas fa-car-side fa-10x opacity-50" style="color: #E63946;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+{% include 'frontend/components/features_section.html' %}
+
+<!-- Team Section -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-12">
+        <h2 class="display-5 fw-bold mb-3">Наш Тим</h2>
+        <p class="lead text-muted">Запознајте се со луѓето кои стојат зад MoeAuto</p>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6">
+        <div class="team-member bg-white p-4 rounded shadow-sm text-center">
+          <div class="mb-3">
+            <i class="fas fa-user-circle fa-5x" style="color: #F77F00;"></i>
+          </div>
+          <h5>Марко Петковски</h5>
+          <p class="text-muted">Генерален Директор</p>
+          <p class="small">Со повеќе од 20 години искуство во автомобилската индустрија, Марко го води тимот кон совршенство.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="team-member bg-white p-4 rounded shadow-sm text-center">
+          <div class="mb-3">
+            <i class="fas fa-user-circle fa-5x" style="color: #F77F00;"></i>
+          </div>
+          <h5>Ана Стојановска</h5>
+          <p class="text-muted">Раководител Продажба</p>
+          <p class="small">Ана е експерт за односи со клиенти и ќе ви помогне да го најдете совршениот автомобил.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="team-member bg-white p-4 rounded shadow-sm text-center">
+          <div class="mb-3">
+            <i class="fas fa-user-circle fa-5x" style="color: #F77F00;"></i>
+          </div>
+          <h5>Димитар Николовски</h5>
+          <p class="text-muted">Технички Раководител</p>
+          <p class="small">Димитар се грижи за техничката проверка и квалитет на секој автомобил што го нудиме.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Mission & Vision -->
+<section class="mission-vision">
+  <h2 class="section-title">Мисија и Визија</h2>
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="mission-card">
+        <div class="text-center mb-4">
+          <i class="fas fa-bullseye fa-3x"></i>
+        </div>
+        <h3 class="text-center mb-4">Наша Мисија</h3>
+        <p class="text-center">Да обезбедиме најквалитетни автомобили со професионална услуга, градејќи долгорочни односи засновани на доверба и транспарентност.</p>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="vision-card">
+        <div class="text-center mb-4">
+          <i class="fas fa-eye fa-3x"></i>
+        </div>
+        <h3 class="text-center mb-4">Наша Визија</h3>
+        <p class="text-center">Да бидеме водечка автокуќа во Македонија, препознатлива по квалитет, иновации и исклучителна грижа за клиентите.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact CTA -->
+<section class="about-section text-center">
+  <h2 class="section-title">Имате прашања?</h2>
+  <p class="lead mb-4">Нашиот тим е тука да ви помогне. Контактирајте не за било какви прашања или информации.</p>
+  <a href="{% url 'frontend_contact' %}" class="btn btn-primary btn-lg px-5" style="background: var(--primary-red); border-color: var(--primary-red);">Контактирајте не</a>
+</section>
+
+</div>
+{% endblock %}

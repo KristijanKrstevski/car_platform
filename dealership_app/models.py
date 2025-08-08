@@ -176,7 +176,27 @@ class Car(models.Model):
 
 
     def display_price(self):
-        return "По договор" if self.price == 0 else f"{self.price} €"
+        return "По договор" if self.price == 0 else f"{self.price:,} €"
+
+    def get_extra_images_list(self):
+        """Return URLs of all extra images for this car"""
+        return [img.image.url for img in self.images.all() if img.image]
+    
+    def delete(self, *args, **kwargs):
+        """Override delete to remove image files from filesystem"""
+        import os
+        
+        # Delete extra images
+        for img in self.images.all():
+            if img.image and os.path.isfile(img.image.path):
+                os.remove(img.image.path)
+        
+        # Delete main image
+        if self.main_image and os.path.isfile(self.main_image.path):
+            os.remove(self.main_image.path)
+        
+        # Call the parent delete method
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -184,6 +204,17 @@ class Car(models.Model):
 class CarImage(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="images")
     image = models.ImageField(upload_to='cars/extra_images/')
+
+    def delete(self, *args, **kwargs):
+        """Override delete to remove image file from filesystem"""
+        import os
+        
+        # Delete the image file
+        if self.image and os.path.isfile(self.image.path):
+            os.remove(self.image.path)
+        
+        # Call the parent delete method
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"Image for {self.car.title}"

@@ -1,6 +1,6 @@
 {% extends 'frontend/base.html' %}
 {% load static %}
-{% block title %}AutoWelt Macedonia - Најди го твојот автомобил{% endblock %}
+{% block title %}MoeAuto Macedonia - Најди го твојот автомобил{% endblock %}
 
 {% block extra_css %}
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -219,6 +219,132 @@
     gap: 30px;
   }
 
+  /* NEW Responsive Carousel System */
+  .carousel-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    overflow: hidden;
+    padding: 0 60px;
+  }
+
+  .carousel-wrapper {
+    position: relative;
+    width: 100%;
+    padding: 40px 0;
+    overflow: hidden;
+  }
+
+  .carousel-track {
+    display: flex;
+    transition: transform 0.6s ease-out;
+    will-change: transform;
+  }
+
+  .carousel-slide {
+    flex: 0 0 auto;
+    opacity: 0.5;
+    transform: scale(0.8);
+    transition: all 0.4s ease;
+    position: relative;
+  }
+
+  .carousel-slide.active {
+    opacity: 1;
+    transform: scale(1.05);
+    z-index: 2;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+  }
+
+  /* Default Desktop Sizes */
+  .carousel-slide {
+    width: 320px;
+    margin: 0 15px;
+  }
+
+  /* Universal Arrow Styling */
+  .carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(calc(-50% + 30px));
+    width: 60px;
+    height: 60px;
+    background: var(--primary-red);
+    border: none;
+    border-radius: 50%;
+    color: var(--white);
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    box-shadow: 0 4px 20px rgba(230, 57, 70, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .carousel-arrow:hover {
+    background: #D62828;
+    transform: translateY(calc(-50% + 30px)) scale(1.1);
+    box-shadow: 0 6px 30px rgba(230, 57, 70, 0.5);
+  }
+
+  .carousel-arrow:active {
+    transform: translateY(calc(-50% + 30px)) scale(0.9);
+  }
+
+  .carousel-arrow-left {
+    left: 20px;
+  }
+
+  .carousel-arrow-right {
+    right: 20px;
+  }
+
+  /* Carousel Indicators */
+  .carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 30px;
+  }
+
+  .indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-red);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .indicator.active,
+  .indicator:hover {
+    background: var(--primary-red);
+    transform: scale(1.2);
+  }
+
+  /* Empty Carousel State */
+  .empty-carousel {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--medium-gray);
+    min-width: 100%;
+  }
+
+  .empty-carousel i {
+    font-size: 4rem;
+    opacity: 0.3;
+    margin-bottom: 20px;
+  }
+
+  .empty-carousel h3 {
+    margin-bottom: 10px;
+    color: var(--medium-gray);
+  }
+
   .car-card {
     background: var(--white);
     border-radius: 16px;
@@ -235,7 +361,7 @@
 
   .car-image {
     position: relative;
-    height: 220px;
+    height: 240px;
     overflow: hidden;
   }
 
@@ -256,9 +382,9 @@
     left: 15px;
     background: var(--primary-red);
     color: var(--white);
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
   }
@@ -312,6 +438,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   .car-price {
@@ -319,6 +447,9 @@
     font-size: 1.4rem;
     font-weight: 700;
     color: var(--primary-red);
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
   }
 
   .view-btn {
@@ -331,6 +462,8 @@
     text-decoration: none;
     transition: all 0.3s ease;
     font-size: 0.9rem;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .view-btn:hover {
@@ -431,7 +564,103 @@
     box-shadow: var(--shadow-hover);
   }
 
-  /* Responsive Design */
+  /* Responsive Carousel Breakpoints */
+  
+  /* Large Desktop (1200px+) */
+  @media (min-width: 1200px) {
+    .carousel-container {
+      padding: 0 80px;
+    }
+    
+    .carousel-slide {
+      width: 350px;
+      margin: 0 20px;
+    }
+  }
+
+  /* Desktop (992px - 1199px) */
+  @media (min-width: 992px) and (max-width: 1199px) {
+    .carousel-container {
+      padding: 0 70px;
+    }
+    
+    .carousel-slide {
+      width: 330px;
+      margin: 0 18px;
+    }
+  }
+
+  /* Tablet (768px - 991px) */
+  @media (min-width: 768px) and (max-width: 991px) {
+    .carousel-container {
+      padding: 0 60px;
+    }
+    
+    .carousel-slide {
+      width: 310px;
+      margin: 0 12px;
+    }
+    
+    .carousel-arrow {
+      width: 55px;
+      height: 55px;
+      font-size: 1.2rem;
+    }
+  }
+
+  /* Mobile Landscape (576px - 767px) */
+  @media (min-width: 576px) and (max-width: 767px) {
+    .carousel-container {
+      padding: 0 40px;
+    }
+    
+    .carousel-slide {
+      width: 300px;
+      margin: 0 12px;
+    }
+    
+    .carousel-wrapper {
+      padding: 30px 0;
+    }
+    
+    .carousel-arrow {
+      width: 50px;
+      height: 50px;
+      font-size: 1.1rem;
+    }
+  }
+
+  /* Mobile Portrait (up to 575px) */
+  @media (max-width: 575px) {
+    .carousel-container {
+      padding: 0 30px;
+    }
+    
+    .carousel-slide {
+      width: 280px;
+      margin: 0 10px;
+    }
+    
+    .carousel-wrapper {
+      padding: 25px 0;
+    }
+    
+    .carousel-arrow {
+      width: 45px;
+      height: 45px;
+      font-size: 1rem;
+    }
+    
+    .carousel-arrow-left {
+      left: 10px;
+    }
+
+    .carousel-arrow-right {
+      right: 10px;
+    }
+  }
+
+  /* General Mobile Styles */
   @media (max-width: 768px) {
     .hero-title {
       font-size: 2.2rem;
@@ -450,15 +679,39 @@
     }
     
     .car-specs {
-      flex-direction: column;
-      gap: 15px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
     }
     
     .spec-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      text-align: left;
+      text-align: center;
+      flex: 1;
+    }
+    
+    .spec-value {
+      font-size: 0.8rem;
+    }
+    
+    .spec-label {
+      font-size: 0.7rem;
+    }
+    
+    .car-badge {
+      padding: 3px 6px;
+      border-radius: 12px;
+      font-size: 0.6rem;
+    }
+    
+    .car-footer {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+      gap: 15px;
+    }
+    
+    .view-btn {
+      align-self: center;
     }
   }
 
@@ -499,12 +752,9 @@
         <label for="brand">Марка</label>
         <select class="form-control" name="brand" id="brand">
           <option value="">Избери марка</option>
-          <option value="bmw">BMW</option>
-          <option value="mercedes">Mercedes-Benz</option>
-          <option value="audi">Audi</option>
-          <option value="volkswagen">Volkswagen</option>
-          <option value="toyota">Toyota</option>
-          <option value="honda">Honda</option>
+          {% for brand in brands %}
+          <option value="{{ brand.id }}">{{ brand.name }}</option>
+          {% endfor %}
         </select>
       </div>
       <div class="form-group">
@@ -529,10 +779,9 @@
         <label for="fuel">Гориво</label>
         <select class="form-control" name="fuel" id="fuel">
           <option value="">Избери гориво</option>
-          <option value="petrol">Бензин</option>
-          <option value="diesel">Дизел</option>
-          <option value="hybrid">Хибрид</option>
-          <option value="electric">Електричен</option>
+          {% for key, label in fuel_choices %}
+          <option value="{{ key }}">{{ label }}</option>
+          {% endfor %}
         </select>
       </div>
       <div class="form-group">
@@ -568,73 +817,97 @@
   </div>
 </section>
 
-<!-- Featured Cars -->
+<!-- Featured Cars Carousel -->
 <section class="featured-section">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">Препорачани возила</h2>
+      <h2 class="section-title">Препорачани автомобили</h2>
       <p class="section-subtitle">Ексклузивен избор на најдобрите понуди од нашиот инвентар</p>
     </div>
-    
-    <div class="cars-grid">
-      {% for car in featured_cars %}
-      <div class="car-card">
-        <div class="car-image">
-          <img src="{{ car.main_image.url }}" alt="{{ car.title }}">
-          <div class="car-badge">Препорачано</div>
-        </div>
-        <div class="car-details">
-          <h3 class="car-title">{{ car.brand.name }} {{ car.model_name.name }}</h3>
-          
-          <div class="car-specs">
-            <div class="spec-item">
-              <div class="spec-icon">
-                <i class="fas fa-calendar-alt"></i>
-              </div>
-              <div class="spec-value">{{ car.year }}</div>
-              <div class="spec-label">Година</div>
+  </div>
+  
+  <!-- Carousel Outside Container for Full Width -->
+  <div class="carousel-container">
+      <div class="carousel-wrapper">
+        <button class="carousel-arrow carousel-arrow-left" onclick="moveCarousel(-1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="carousel-arrow carousel-arrow-right" onclick="moveCarousel(1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+        
+        <div class="carousel-track" id="carouselTrack">
+          {% for car in featured_cars %}
+          <div class="car-card carousel-slide">
+            <div class="car-image">
+              <img src="{{ car.main_image.url }}" alt="{{ car.title }}">
+              <div class="car-badge">Препорачано</div>
             </div>
-            <div class="spec-item">
-              <div class="spec-icon">
-                <i class="fas fa-tachometer-alt"></i>
+            <div class="car-details">
+              <h3 class="car-title">{{ car.brand.name }} {{ car.model_name.name }}</h3>
+              
+              <div class="car-specs">
+                <div class="spec-item">
+                  <div class="spec-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                  </div>
+                  <div class="spec-value">{{ car.year }}</div>
+                  <div class="spec-label">Година</div>
+                </div>
+                <div class="spec-item">
+                  <div class="spec-icon">
+                    <i class="fas fa-gas-pump"></i>
+                  </div>
+                  <div class="spec-value">{{ car.get_fuel_type_display }}</div>
+                  <div class="spec-label">Гориво</div>
+                </div>
+                <div class="spec-item">
+                  <div class="spec-icon">
+                    <i class="fas fa-cog"></i>
+                  </div>
+                  <div class="spec-value">{{ car.get_transmission_display }}</div>
+                  <div class="spec-label">Менувач</div>
+                </div>
               </div>
-              <div class="spec-value">{{ car.get_mileage_display }}</div>
-              <div class="spec-label">Километри</div>
-            </div>
-            <div class="spec-item">
-              <div class="spec-icon">
-                <i class="fas fa-gas-pump"></i>
+              
+              <div class="car-footer">
+                <div class="car-price">{{ car.display_price }}</div>
+                <a href="{% url 'frontend_vehicle_detail' car.pk %}" class="view-btn">
+                  <i class="fas fa-eye me-1"></i>Детали
+                </a>
               </div>
-              <div class="spec-value">{{ car.get_fuel_type_display }}</div>
-              <div class="spec-label">Гориво</div>
             </div>
           </div>
-          
-          <div class="car-footer">
-            <div class="car-price">{{ car.display_price }}</div>
-            <a href="{% url 'frontend_vehicle_detail' car.pk %}" class="view-btn">
-              <i class="fas fa-eye me-1"></i>Детали
-            </a>
+          {% empty %}
+          <div class="empty-carousel">
+            <i class="fas fa-car"></i>
+            <h3>Нема достапни возила</h3>
+            <p>Проверете подоцна за нови понуди</p>
           </div>
+          {% endfor %}
         </div>
+        
+        <!-- Carousel Indicators -->
+        {% if featured_cars %}
+        <div class="carousel-indicators">
+          {% for car in featured_cars %}
+          <button class="indicator {% if forloop.first %}active{% endif %}" onclick="goToSlide({{ forloop.counter0 }})"></button>
+          {% endfor %}
+        </div>
+        {% endif %}
       </div>
-      {% empty %}
-      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
-        <i class="fas fa-car" style="font-size: 4rem; color: var(--medium-gray); opacity: 0.5; margin-bottom: 20px;"></i>
-        <h3 style="color: var(--medium-gray); margin-bottom: 10px;">Нема достапни возила</h3>
-        <p style="color: var(--medium-gray);">Проверете подоцна за нови понуди</p>
-      </div>
-      {% endfor %}
     </div>
-    
-    {% if featured_cars %}
+  
+  <!-- View All Button -->
+  {% if featured_cars %}
+  <div class="container">
     <div style="text-align: center; margin-top: 50px;">
       <a href="{% url 'frontend_vehicles' %}" class="cta-btn">
         <i class="fas fa-th-large me-2"></i>Види ги сите возила
       </a>
     </div>
-    {% endif %}
   </div>
+  {% endif %}
 </section>
 
 <!-- Services Section -->
@@ -669,6 +942,14 @@
         <h3 class="service-title">Најдобри цени</h3>
         <p class="service-description">Конкурентни цени и можности за финансирање за секој буџет.</p>
       </div>
+      
+      <div class="service-card">
+        <div class="service-icon">
+          <i class="fas fa-tools"></i>
+        </div>
+        <h3 class="service-title">Сервисна поддршка</h3>
+        <p class="service-description">Комплетна сервисна поддршка и одржување за вашиот автомобил.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -683,4 +964,326 @@
     </a>
   </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// AJAX to reload model dropdown when brand changes
+document.getElementById('brand').addEventListener('change', function(){
+  const brandId = this.value;
+  const modelSelect = document.getElementById('model');
+  
+  if(!brandId) {
+    modelSelect.innerHTML = '<option value="">Избери модел</option>';
+    return;
+  }
+  
+  modelSelect.innerHTML = '<option value="">Се вчитува...</option>';
+  
+  fetch(`{% url 'ajax_models' %}?brand=${brandId}`)
+    .then(response => response.json())
+    .then(data => {
+      modelSelect.innerHTML = '<option value="">Избери модел</option>';
+      data.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model.id;
+        option.textContent = model.name;
+        modelSelect.appendChild(option);
+      });
+    })
+    .catch(error => {
+      console.error('Error loading models:', error);
+      modelSelect.innerHTML = '<option value="">Грешка при вчитување</option>';
+    });
+});
+
+// NEW Carousel System with Perfect Centering
+let currentSlide = 0;
+let isAutoPlaying = true;
+let autoPlayInterval;
+const slides = document.querySelectorAll('.carousel-slide');
+const indicators = document.querySelectorAll('.indicator');
+const track = document.getElementById('carouselTrack');
+
+// Get initial slide based on device type
+function getInitialSlide() {
+  if (slides.length === 0) return 0;
+  
+  // Mobile: start with first slide (index 0)
+  if (window.innerWidth <= 768) {
+    return 0;
+  }
+  // Desktop/Tablet: start with third slide (index 2) if available
+  else {
+    return Math.min(2, slides.length - 1);
+  }
+}
+
+// Get slide dimensions and spacing
+function getSlideInfo() {
+  if (!slides.length) return { width: 0, spacing: 0 };
+  
+  const slide = slides[0];
+  const style = window.getComputedStyle(slide);
+  const width = slide.offsetWidth;
+  const marginLeft = parseFloat(style.marginLeft) || 0;
+  const marginRight = parseFloat(style.marginRight) || 0;
+  const spacing = marginLeft + marginRight;
+  
+  return { width, spacing };
+}
+
+// Update carousel position with perfect centering
+function updateCarousel() {
+  if (!track || slides.length === 0) return;
+  
+  const { width: slideWidth, spacing } = getSlideInfo();
+  const slideStep = slideWidth + spacing;
+  const wrapper = track.parentElement;
+  const wrapperWidth = wrapper.offsetWidth;
+  
+  // Calculate exact center position for active slide
+  const centerOffset = (wrapperWidth - slideWidth) / 2;
+  const translateX = Math.round(-currentSlide * slideStep + centerOffset);
+  
+  // Apply transform with pixel-perfect positioning
+  track.style.transform = `translateX(${translateX}px)`;
+  
+  // Update active states
+  slides.forEach((slide, index) => {
+    slide.classList.toggle('active', index === currentSlide);
+  });
+  
+  // Update indicators
+  indicators.forEach((indicator, index) => {
+    indicator.classList.toggle('active', index === currentSlide);
+  });
+}
+
+// Move carousel
+function moveCarousel(direction) {
+  if (slides.length === 0) return;
+  
+  currentSlide += direction;
+  
+  // Loop around
+  if (currentSlide >= slides.length) {
+    currentSlide = 0;
+  } else if (currentSlide < 0) {
+    currentSlide = slides.length - 1;
+  }
+  
+  updateCarousel();
+  resetAutoPlay();
+}
+
+// Go to specific slide
+function goToSlide(slideIndex) {
+  if (slides.length === 0) return;
+  currentSlide = slideIndex;
+  updateCarousel();
+  resetAutoPlay();
+}
+
+// Auto-play functionality
+function startAutoPlay() {
+  if (slides.length <= 1) return;
+  
+  autoPlayInterval = setInterval(() => {
+    if (isAutoPlaying) {
+      moveCarousel(1);
+    }
+  }, 4000); // Change slide every 4 seconds
+}
+
+function stopAutoPlay() {
+  clearInterval(autoPlayInterval);
+}
+
+function resetAutoPlay() {
+  stopAutoPlay();
+  if (isAutoPlaying) {
+    startAutoPlay();
+  }
+}
+
+// Pause auto-play on hover
+function setupHoverPause() {
+  const carouselContainer = document.querySelector('.carousel-container');
+  if (carouselContainer) {
+    carouselContainer.addEventListener('mouseenter', () => {
+      isAutoPlaying = false;
+      stopAutoPlay();
+    });
+    
+    carouselContainer.addEventListener('mouseleave', () => {
+      isAutoPlaying = true;
+      startAutoPlay();
+    });
+  }
+}
+
+// Touch/swipe support for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+
+function handleTouchStart(e) {
+  touchStartX = e.changedTouches[0].screenX;
+}
+
+function handleTouchEnd(e) {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+}
+
+function handleSwipe() {
+  const swipeThreshold = 50;
+  const diff = touchStartX - touchEndX;
+  
+  if (Math.abs(diff) > swipeThreshold) {
+    if (diff > 0) {
+      moveCarousel(1);
+    } else {
+      moveCarousel(-1);
+    }
+  }
+}
+
+// Keyboard navigation
+function handleKeyNavigation(e) {
+  if (e.key === 'ArrowLeft') {
+    moveCarousel(-1);
+  } else if (e.key === 'ArrowRight') {
+    moveCarousel(1);
+  }
+}
+
+// Initialize carousel
+function initCarousel() {
+  if (slides.length === 0) return;
+  
+  // Set up touch events
+  if (track) {
+    track.addEventListener('touchstart', handleTouchStart, { passive: true });
+    track.addEventListener('touchend', handleTouchEnd, { passive: true });
+  }
+  
+  // Set up keyboard navigation
+  document.addEventListener('keydown', handleKeyNavigation);
+  
+  // Set up hover pause
+  setupHoverPause();
+  
+  // Initial setup with proper delay
+  setTimeout(() => {
+    currentSlide = getInitialSlide();
+    updateCarousel();
+    startAutoPlay();
+  }, 300);
+  
+  // Handle window resize with proper debouncing
+  let resizeTimeout;
+  let lastScreenType = window.innerWidth <= 768 ? 'mobile' : 'desktop';
+  
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      const currentScreenType = window.innerWidth <= 768 ? 'mobile' : 'desktop';
+      
+      // Reset to appropriate starting position if screen type changed
+      if (lastScreenType !== currentScreenType) {
+        currentSlide = getInitialSlide();
+        lastScreenType = currentScreenType;
+      }
+      
+      updateCarousel();
+    }, 100);
+  });
+  
+  // Handle orientation change
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+      const newScreenType = window.innerWidth <= 768 ? 'mobile' : 'desktop';
+      if (lastScreenType !== newScreenType) {
+        currentSlide = getInitialSlide();
+        lastScreenType = newScreenType;
+      }
+      updateCarousel();
+    }, 300);
+  });
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  // Wait for images to load before initializing carousel
+  const carouselImages = document.querySelectorAll('.carousel-slide img');
+  let loadedImages = 0;
+  
+  if (carouselImages.length === 0) {
+    initCarousel();
+    return;
+  }
+  
+  function checkImagesLoaded() {
+    loadedImages++;
+    if (loadedImages === carouselImages.length) {
+      initCarousel();
+    }
+  }
+  
+  carouselImages.forEach(img => {
+    if (img.complete) {
+      checkImagesLoaded();
+    } else {
+      img.addEventListener('load', checkImagesLoaded);
+      img.addEventListener('error', checkImagesLoaded); // Handle broken images
+    }
+  });
+  
+  // Fallback - initialize after 2 seconds regardless
+  setTimeout(() => {
+    if (loadedImages < carouselImages.length) {
+      initCarousel();
+    }
+  }, 2000);
+  
+  // Add smooth scrolling to section when clicking view all button
+  const viewAllBtn = document.querySelector('a[href*="frontend_vehicles"]');
+  if (viewAllBtn) {
+    viewAllBtn.addEventListener('click', function(e) {
+      // Add a nice transition effect
+      this.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        this.style.transform = 'scale(1)';
+      }, 150);
+    });
+  }
+});
+
+// Intersection Observer for animations
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, observerOptions);
+
+// Observe carousel for entrance animation
+document.addEventListener('DOMContentLoaded', () => {
+  const carouselContainer = document.querySelector('.carousel-container');
+  if (carouselContainer) {
+    carouselContainer.style.opacity = '0';
+    carouselContainer.style.transform = 'translateY(30px)';
+    carouselContainer.style.transition = 'all 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)';
+    observer.observe(carouselContainer);
+  }
+});
+</script>
 {% endblock %}

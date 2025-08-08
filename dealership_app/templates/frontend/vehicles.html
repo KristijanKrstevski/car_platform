@@ -1,255 +1,826 @@
 {% extends 'frontend/base.html' %}
 {% load static %}
 
-{% block title %}Vehicles - Car Dealership{% endblock %}
+{% block title %}Возила - MoeAuto Macedonia{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary-red: #E63946;
+    --primary-blue: #1D3557;
+    --accent-orange: #F77F00;
+    --light-gray: #F8F9FA;
+    --dark-gray: #212529;
+    --medium-gray: #6C757D;
+    --white: #FFFFFF;
+    --shadow: 0 4px 20px rgba(0,0,0,0.1);
+    --shadow-hover: 0 8px 30px rgba(0,0,0,0.15);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--light-gray);
+  }
+
+  /* Hero Header */
+  .vehicles-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-red) 100%);
+    color: var(--white);
+    padding: 40px 0;
+    margin-bottom: 30px;
+  }
+
+  .header-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .header-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  /* Filters Section */
+  .filters-section {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+  }
+
+  .filters-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+    margin-bottom: 20px;
+  }
+
+  .results-count {
+    background: var(--primary-red);
+    color: var(--white);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+
+  .filter-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    align-items: end;
+  }
+
+  .form-group label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--dark-gray);
+    font-size: 0.95rem;
+  }
+
+  .form-control {
+    padding: 12px 16px;
+    border: 2px solid #E9ECEF;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: var(--white);
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: var(--primary-red);
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+  }
+
+  .filter-btn {
+    background: var(--primary-red);
+    color: var(--white);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .filter-btn:hover {
+    background: #D62828;
+    transform: translateY(-2px);
+  }
+
+  .reset-btn {
+    background: transparent;
+    color: var(--medium-gray);
+    border: 2px solid var(--medium-gray);
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+  }
+
+  .reset-btn:hover {
+    background: var(--medium-gray);
+    color: var(--white);
+  }
+
+  /* Cars Grid */
+  .cars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+  }
+
+  .car-card {
+    background: var(--white);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all 0.4s ease;
+    border: 1px solid #F1F3F4;
+  }
+
+  .car-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .car-image {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+  }
+
+  .car-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .car-card:hover .car-image img {
+    transform: scale(1.05);
+  }
+
+  .car-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: var(--primary-red);
+    color: var(--white);
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .car-details {
+    padding: 25px;
+  }
+
+  .car-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+    margin-bottom: 15px;
+  }
+
+  .car-specs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 15px 0;
+    border-top: 1px solid #F1F3F4;
+    border-bottom: 1px solid #F1F3F4;
+  }
+
+  .spec-item {
+    text-align: center;
+    flex: 1;
+  }
+
+  .spec-icon {
+    font-size: 1.2rem;
+    color: var(--primary-red);
+    margin-bottom: 5px;
+  }
+
+  .spec-value {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+  }
+
+  .spec-label {
+    font-size: 0.8rem;
+    color: var(--medium-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .car-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .car-price {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-red);
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
+  }
+
+  .view-btn {
+    background: var(--primary-blue);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .view-btn:hover {
+    background: #14213D;
+    color: var(--white);
+    transform: translateY(-1px);
+  }
+
+  /* Pagination */
+  .pagination {
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .page-link {
+    color: var(--primary-blue);
+    border: 1px solid #DEE2E6;
+    padding: 10px 15px;
+    margin: 0 2px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .page-link:hover {
+    background: var(--primary-red);
+    border-color: var(--primary-red);
+    color: var(--white);
+  }
+
+  .page-item.active .page-link {
+    background: var(--primary-red);
+    border-color: var(--primary-red);
+    color: var(--white);
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .header-title {
+      font-size: 2rem;
+    }
+    
+    .vehicles-header {
+      padding: 30px 0;
+    }
+    
+    .filter-form {
+      grid-template-columns: 1fr;
+    }
+    
+    .cars-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    .car-specs {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px 5px;
+    }
+    
+    .spec-item {
+      text-align: center;
+    }
+    
+    .car-details {
+      padding: 20px;
+    }
+    
+    .car-title {
+      font-size: 1.2rem;
+    }
+    
+    .car-price {
+      font-size: 1.3rem;
+    }
+    
+    .car-footer {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+      gap: 15px;
+    }
+    
+    .view-btn {
+      align-self: center;
+    }
+    
+    .filters-section {
+      padding: 20px;
+    }
+  }
+
+  /* No Results */
+  .no-results {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .no-results-icon {
+    font-size: 4rem;
+    color: var(--medium-gray);
+    opacity: 0.5;
+    margin-bottom: 20px;
+  }
+
+  .mobile-filter-toggle {
+    background: var(--primary-red);
+    color: var(--white);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    width: 100%;
+    margin-bottom: 20px;
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-filter-toggle {
+      display: block;
+    }
+    
+    .filters-section {
+      margin-bottom: 20px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .header-title {
+      font-size: 1.8rem;
+    }
+    
+    .header-subtitle {
+      font-size: 1rem;
+    }
+    
+    .vehicles-header {
+      padding: 25px 0;
+    }
+    
+    .cars-grid {
+      gap: 15px;
+    }
+    
+    .car-specs {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+    }
+    
+    .spec-item {
+      text-align: center;
+      flex: 1;
+    }
+    
+    .spec-value {
+      font-size: 0.8rem;
+    }
+    
+    .spec-label {
+      font-size: 0.7rem;
+    }
+    
+    .car-details {
+      padding: 15px;
+    }
+    
+    .car-title {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    
+    .car-price {
+      font-size: 1.2rem;
+    }
+    
+    .car-footer {
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+    
+    .view-btn {
+      padding: 8px 15px;
+      font-size: 0.85rem;
+    }
+    
+    .filters-section {
+      padding: 15px;
+    }
+    
+    .form-control {
+      padding: 10px 14px;
+      font-size: 0.95rem;
+    }
+    
+    .filter-btn {
+      padding: 10px 20px;
+      font-size: 0.95rem;
+    }
+    
+    .results-count {
+      font-size: 0.85rem;
+      padding: 6px 12px;
+    }
+    
+    .car-badge {
+      padding: 3px 6px;
+      border-radius: 12px;
+      font-size: 0.6rem;
+    }
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="mb-5">
-  <div class="horizontal-red-line-full-width"></div>
-  <div class="bg-white shadow p-3 p-md-4 mx-md-2">
+<!-- Header -->
+<section class="vehicles-header">
+  <div class="container text-center">
+    <h1 class="header-title">Нашата колекција</h1>
+    <p class="header-subtitle">Пронајдете го совршениот автомобил од нашиот широк избор</p>
+  </div>
+</section>
 
-    <!-- Mobile toggle -->
-    <button class="btn btn-primary w-100 d-md-none mb-3"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#filterPanel"
-            aria-expanded="true"
-            aria-controls="filterPanel">
-      Сокриј Филтри <i class="fa fa-caret-up"></i>
+<!-- Main Content -->
+<div class="container">
+  <!-- Filters -->
+  <div class="filters-section">
+    <button class="mobile-filter-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#filterPanel" aria-expanded="true">
+      <i class="fas fa-filter me-2"></i><span class="toggle-text">Затвори филтер</span>
     </button>
-
-    <div id="filterPanel" class="collapse d-md-block show">
-      <div class="fs-5 text-primary text-uppercase fw-bold mb-3">
-        {{ cars.paginator.count }} Достапни возила
+    
+    <div class="collapse show" id="filterPanel">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="filters-title">Филтрирај возила</h3>
+        <div class="results-count">
+          <i class="fas fa-car me-2"></i>{{ cars.paginator.count }} возила
+        </div>
       </div>
 
-      <form method="get" novalidate>
+      <form method="get" class="filter-form">
         <div class="row g-3">
-          <!-- Brand -->
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <select name="brand" id="brand" class="form-select">
-              <option value="">Марка</option>
-              {% for b in brands %}
-              <option value="{{ b.id }}"
-                      {% if request.GET.brand == b.id|stringformat:"s" %}selected{% endif %}>
-                {{ b.name }}
-              </option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <!-- Model (AJAX) -->
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <select name="model_name" id="model_name" class="form-select"
-                    {% if not request.GET.brand %}disabled{% endif %}>
-              <option value="">Модел</option>
-              {% for m in models %}
-              <option value="{{ m.id }}"
-                      {% if request.GET.model_name == m.id|stringformat:"s" %}selected{% endif %}>
-                {{ m.name }}
-              </option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <!-- Transmission -->
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <select name="transmission" class="form-select">
-              <option value="">Менувач</option>
-              {% for key,label in transmission_choices %}
-              <option value="{{ key }}"
-                      {% if request.GET.transmission == key %}selected{% endif %}>
-                {{ label }}
-              </option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <!-- Body -->
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <select name="vehicle_body" class="form-select">
-              <option value="">Каросерија</option>
-              {% for key,label in vehicle_bodies %}
-              <option value="{{ key }}"
-                      {% if request.GET.vehicle_body == key %}selected{% endif %}>
-                {{ label }}
-              </option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <!-- Fuel -->
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <select name="fuel" class="form-select">
-              <option value="">Гориво</option>
-              {% for key,label in fuel_choices %}
-              <option value="{{ key }}"
-                      {% if request.GET.fuel == key %}selected{% endif %}>
-                {{ label }}
-              </option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <!-- Color -->
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <select name="color" class="form-select">
-              <option value="">Боја</option>
-              {% for key,label in colors %}
-              <option value="{{ key }}"
-                      {% if request.GET.color == key %}selected{% endif %}>
-                {{ label }}
-              </option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <!-- Cars ≤ 77 kW -->
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <div class="form-check mt-2">
-              <input class="form-check-input" type="checkbox" id="forBeginners"
-                     name="for_beginners"
-                     {% if request.GET.for_beginners %}checked{% endif %}>
-              <label class="form-check-label" for="forBeginners">
-                Автомобили за почетници
-              </label>
+          <!-- First Row -->
+          <div class="col-md-6 col-lg-3">
+            <div class="form-group">
+              <label for="brand">Марка</label>
+              <select name="brand" id="brand" class="form-control">
+                <option value="">Сите марки</option>
+                {% for b in brands %}
+                <option value="{{ b.id }}" {% if request.GET.brand == b.id|stringformat:"s" %}selected{% endif %}>
+                  {{ b.name }}
+                </option>
+                {% endfor %}
+              </select>
             </div>
           </div>
 
-          <!-- Sort: Price -->
-          <div class="col-6 col-sm-4 col-md-3">
-            <select name="sort_price" class="form-select">
-              <option value="">Цена</option>
-              <option value="asc"  {% if request.GET.sort_price == 'asc'  %}selected{% endif %}>Ниска→Висока</option>
-              <option value="desc" {% if request.GET.sort_price == 'desc' %}selected{% endif %}>Висока→Ниска</option>
-            </select>
+          <div class="col-md-6 col-lg-3">
+            <div class="form-group">
+              <label for="model_name">Модел</label>
+              <select name="model_name" id="model_name" class="form-control" {% if not request.GET.brand %}disabled{% endif %}>
+                <option value="">Сите модели</option>
+                {% for m in models %}
+                <option value="{{ m.id }}" {% if request.GET.model_name == m.id|stringformat:"s" %}selected{% endif %}>
+                  {{ m.name }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
           </div>
 
-          <!-- Sort: Mileage -->
-          <div class="col-6 col-sm-4 col-md-3">
-            <select name="sort_mileage" class="form-select">
-              <option value="">Километража</option>
-              <option value="asc"  {% if request.GET.sort_mileage == 'asc'  %}selected{% endif %}>Малку→Многу</option>
-              <option value="desc" {% if request.GET.sort_mileage == 'desc' %}selected{% endif %}>Многу→Малку</option>
-            </select>
+          <div class="col-md-6 col-lg-3">
+            <div class="form-group">
+              <label for="fuel">Гориво</label>
+              <select name="fuel" class="form-control">
+                <option value="">Сите типови</option>
+                {% for key,label in fuel_choices %}
+                <option value="{{ key }}" {% if request.GET.fuel == key %}selected{% endif %}>
+                  {{ label }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
           </div>
 
-          <!-- Sort: Year -->
-          <div class="col-6 col-sm-4 col-md-3">
-            <select name="sort_year" class="form-select">
-              <option value="">Година</option>
-              <option value="asc"  {% if request.GET.sort_year == 'asc'  %}selected{% endif %}>Стара→Нова</option>
-              <option value="desc" {% if request.GET.sort_year == 'desc' %}selected{% endif %}>Нова→Стара</option>
-            </select>
+          <div class="col-md-6 col-lg-3">
+            <div class="form-group">
+              <label for="transmission">Менувач</label>
+              <select name="transmission" class="form-control">
+                <option value="">Сите типови</option>
+                {% for key,label in transmission_choices %}
+                <option value="{{ key }}" {% if request.GET.transmission == key %}selected{% endif %}>
+                  {{ label }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
           </div>
-        </div>
 
-        <!-- Actions -->
-        <div class="row mt-4">
-          <div class="col-auto">
-            <button type="submit" class="btn btn-primary px-4">Примени</button>
-            <a href="{% url 'frontend_vehicles' %}"
-               class="btn btn-outline-secondary px-4 ms-2">Ресетирај</a>
+          <!-- Second Row -->
+          <div class="col-md-6 col-lg-3">
+            <div class="form-group">
+              <label for="body_type">Каросерија</label>
+              <select name="body_type" class="form-control">
+                <option value="">Сите типови</option>
+                {% for key,label in vehicle_bodies %}
+                <option value="{{ key }}" {% if request.GET.body_type == key %}selected{% endif %}>
+                  {{ label }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="form-group">
+              <label for="sort_price">Цена</label>
+              <select name="sort_price" class="form-control">
+                <option value="">Сите цени</option>
+                <option value="asc" {% if request.GET.sort_price == 'asc' %}selected{% endif %}>Ниска → Висока</option>
+                <option value="desc" {% if request.GET.sort_price == 'desc' %}selected{% endif %}>Висока → Ниска</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="form-group">
+              <label for="sort_mileage">Километража</label>
+              <select name="sort_mileage" class="form-control">
+                <option value="">Сите километражи</option>
+                <option value="asc" {% if request.GET.sort_mileage == 'asc' %}selected{% endif %}>Малку → Многу</option>
+                <option value="desc" {% if request.GET.sort_mileage == 'desc' %}selected{% endif %}>Многу → Малку</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="form-group">
+              <div class="form-check mt-4">
+                <input class="form-check-input" type="checkbox" id="for_beginners" name="for_beginners" {% if request.GET.for_beginners %}checked{% endif %}>
+                <label class="form-check-label" for="for_beginners">
+                  Автомобил за почетници
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="col-12">
+            <div class="d-flex gap-3 mt-3">
+              <button type="submit" class="filter-btn flex-fill">
+                <i class="fas fa-search me-2"></i>Примени
+              </button>
+              <a href="{% url 'frontend_vehicles' %}" class="reset-btn">
+                <i class="fas fa-undo me-2"></i>Ресетирај
+              </a>
+            </div>
           </div>
         </div>
       </form>
     </div>
   </div>
-</div>
 
-<!-- Listing -->
-<section class="mb-5">
-  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+  <!-- Cars Grid -->
+  {% if cars %}
+  <div class="cars-grid">
     {% for car in cars %}
-    <div class="col">
-      <div class="card h-100 shadow-sm">
-        <img src="{{ car.main_image.url }}"
-             class="card-img-top"
-             alt="{{ car.title }}">
-
-        <!-- Icons row -->
-        <hr>
-        <div class="d-flex justify-content-around align-items-center py-2 border-top">
-          <!-- Year -->
-          <div class="text-center">
-            <img src="{% static 'calendar.png' %}" alt="Year" width="36" height="36">
-            <div class="small">{{ car.year }}</div>
+    <div class="car-card" id="car-{{ car.pk }}">
+      <div class="car-image">
+        <img src="{{ car.main_image.url }}" alt="{{ car.title }}">
+        {% if forloop.counter <= 4 %}
+        <div class="car-badge">ПРЕПОРАЧАНО</div>
+        {% else %}
+        <div class="car-badge">{{ car.year }}</div>
+        {% endif %}
+      </div>
+      <div class="car-details">
+        <h3 class="car-title">{{ car.brand.name }} {{ car.model_name.name }}</h3>
+        
+        <div class="car-specs">
+          <div class="spec-item">
+            <div class="spec-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="spec-value">{{ car.year }}</div>
+            <div class="spec-label">Година</div>
           </div>
-          <!-- Transmission -->
-          <div class="text-center">
-            <img src="{% static 'manual-transmission.png' %}" alt="Transmission" width="36" height="36">
-            <div class="small">{{ car.get_transmission_display }}</div>
+          <div class="spec-item">
+            <div class="spec-icon">
+              <i class="fas fa-gas-pump"></i>
+            </div>
+            <div class="spec-value">{{ car.get_fuel_type_display }}</div>
+            <div class="spec-label">Гориво</div>
           </div>
-          <!-- Fuel -->
-          <div class="text-center">
-            <img src="{% static 'gas-station.png' %}" alt="Fuel" width="36" height="36">
-            <div class="small">{{ car.get_fuel_type_display }}</div>
-          </div>
-          <!-- Mileage -->
-          <div class="text-center">
-            <img src="{% static 'mileage.png' %}" alt="Mileage" width="36" height="36">
-            <div class="small">{{ car.get_mileage_display }}</div>
+          <div class="spec-item">
+            <div class="spec-icon">
+              <i class="fas fa-cog"></i>
+            </div>
+            <div class="spec-value">{{ car.get_transmission_display }}</div>
+            <div class="spec-label">Менувач</div>
           </div>
         </div>
-<hr>
-        <div class="card-body d-flex flex-column text-center">
-          <!-- Centered Title -->
-          <h5 class="card-title">{{ car.title }}</h5>
-          <!-- Centered, Bold Price -->
-          <p class="card-text fw-bold fs-4 text-primary mb-4">
-           {{ car.display_price }}
-          </p>
-          <a href="{% url 'frontend_vehicle_detail' car.pk %}"
-             class="mt-auto btn btn-outline-primary btn-sm">
-            Види повеќе
+        
+        <div class="car-footer">
+          <div class="car-price">{{ car.display_price }}</div>
+          <a href="{% url 'frontend_vehicle_detail' car.pk %}?back=vehicles&page={{ cars.number }}&brand={{ brand }}&model_name={{ model_name }}&transmission={{ transmission }}&vehicle_body={{ vehicle_body }}&fuel={{ fuel }}&color={{ color }}&for_beginners={{ for_beginners }}&price_from={{ price_from }}&price_to={{ price_to }}&year_from={{ year_from }}&sort_price={{ sort_price }}&sort_mileage={{ sort_mileage }}&sort_year={{ sort_year }}" class="view-btn">
+            <i class="fas fa-eye me-1"></i>Детали
           </a>
         </div>
       </div>
     </div>
     {% endfor %}
   </div>
+  {% else %}
+  <div class="no-results">
+    <i class="fas fa-car no-results-icon"></i>
+    <h3 style="color: var(--medium-gray); margin-bottom: 10px;">Нема пронајдени возила</h3>
+    <p style="color: var(--medium-gray);">Пробајте со различни критериуми за пребарување</p>
+    <a href="{% url 'frontend_vehicles' %}" class="btn btn-primary mt-3">
+      <i class="fas fa-refresh me-2"></i>Ресетирај пребарување
+    </a>
+  </div>
+  {% endif %}
 
   <!-- Pagination -->
-  <nav class="mt-4">
-    <ul class="pagination justify-content-center">
+  {% if cars.has_other_pages %}
+  <nav aria-label="Pagination">
+    <ul class="pagination">
       {% if cars.has_previous %}
       <li class="page-item">
-        <a class="page-link" href="?page={{ cars.previous_page_number }}">Previous</a>
+        <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ cars.previous_page_number }}">
+          <i class="fas fa-chevron-left me-1"></i>Претходна
+        </a>
       </li>
       {% endif %}
+
       {% for num in cars.paginator.page_range %}
-      <li class="page-item {% if cars.number == num %}active{% endif %}">
-        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+      {% if num == cars.number %}
+      <li class="page-item active">
+        <span class="page-link">{{ num }}</span>
       </li>
+      {% else %}
+      <li class="page-item">
+        <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ num }}">{{ num }}</a>
+      </li>
+      {% endif %}
       {% endfor %}
+
       {% if cars.has_next %}
       <li class="page-item">
-        <a class="page-link" href="?page={{ cars.next_page_number }}">Next</a>
+        <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ cars.next_page_number }}">
+          Следна<i class="fas fa-chevron-right ms-1"></i>
+        </a>
       </li>
       {% endif %}
     </ul>
   </nav>
-</section>
+  {% endif %}
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// AJAX to reload #model_name on brand change (unchanged)
+// AJAX to reload model dropdown when brand changes
 document.getElementById('brand').addEventListener('change', function(){
-  const id = this.value, sel = document.getElementById('model_name');
-  sel.disabled = !id;
-  if(!id){ sel.innerHTML = '<option value="">Модел</option>'; return; }
-  fetch(`{% url 'ajax_models' %}?brand=${id}`)
-    .then(r=>r.json())
-    .then(data=>{
-      sel.innerHTML = '<option value="">Модел</option>';
-      data.forEach(m=> {
-        const o = document.createElement('option');
-        o.value = m.id; o.textContent = m.name;
-        if(String(m.id)==="{{ request.GET.model_name }}") o.selected=true;
-        sel.append(o);
+  const brandId = this.value;
+  const modelSelect = document.getElementById('model_name');
+  
+  modelSelect.disabled = !brandId;
+  
+  if(!brandId) {
+    modelSelect.innerHTML = '<option value="">Сите модели</option>';
+    return;
+  }
+  
+  modelSelect.innerHTML = '<option value="">Се вчитува...</option>';
+  
+  fetch(`{% url 'ajax_models' %}?brand=${brandId}`)
+    .then(response => response.json())
+    .then(data => {
+      modelSelect.innerHTML = '<option value="">Сите модели</option>';
+      data.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model.id;
+        option.textContent = model.name;
+        if(String(model.id) === "{{ request.GET.model_name }}") {
+          option.selected = true;
+        }
+        modelSelect.appendChild(option);
       });
+      modelSelect.disabled = false;
+    })
+    .catch(error => {
+      console.error('Error loading models:', error);
+      modelSelect.innerHTML = '<option value="">Грешка при вчитување</option>';
+      modelSelect.disabled = true;
     });
+});
+
+// Filter toggle functionality
+const toggleButton = document.querySelector('.mobile-filter-toggle');
+const toggleText = document.querySelector('.toggle-text');
+const filterPanel = document.getElementById('filterPanel');
+
+// Set initial state correctly based on whether panel is shown
+document.addEventListener('DOMContentLoaded', function() {
+  if (filterPanel.classList.contains('show')) {
+    toggleText.textContent = 'Затвори филтер';
+    toggleButton.setAttribute('aria-expanded', 'true');
+  } else {
+    toggleText.textContent = 'Филтри';
+    toggleButton.setAttribute('aria-expanded', 'false');
+  }
+});
+
+// Handle toggle text change
+filterPanel.addEventListener('shown.bs.collapse', function () {
+  toggleText.textContent = 'Затвори филтер';
+});
+
+filterPanel.addEventListener('hidden.bs.collapse', function () {
+  toggleText.textContent = 'Филтри';
+});
+
+// Auto-close filter panel after form submission
+document.querySelector('.filter-form').addEventListener('submit', function() {
+  // Close the filter panel with animation
+  const bsCollapse = new bootstrap.Collapse(filterPanel, {
+    toggle: false
+  });
+  bsCollapse.hide();
+});
+
+// Scroll to specific car if hash is present in URL (when returning from detail page)
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.location.hash) {
+    const targetElement = document.querySelector(window.location.hash);
+    if (targetElement) {
+      // Wait a moment for the page to fully load, then scroll
+      setTimeout(function() {
+        targetElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center'
+        });
+        
+        // Add a highlight effect to show which car was selected
+        targetElement.style.transform = 'scale(1.05)';
+        targetElement.style.boxShadow = '0 8px 30px rgba(230, 57, 70, 0.3)';
+        targetElement.style.transition = 'all 0.5s ease';
+        
+        // Remove highlight after 2 seconds
+        setTimeout(function() {
+          targetElement.style.transform = '';
+          targetElement.style.boxShadow = '';
+        }, 2000);
+      }, 500);
+    }
+  }
 });
 </script>
 {% endblock %}

@@ -17,19 +17,39 @@ Including another URLconf
 # dealership_menagment/urls.py (or wherever your main urls.py is)
 
 from django.contrib import admin
-from django.urls import path
+from django.contrib.auth import views as auth_views
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.shortcuts import redirect
 from dealership_app import views
 from dealership_app import frontend_views
-urlpatterns = [
+from dealership_app import admin_views
 
+
+def admin_redirect(request):
+    """Redirect admin to dashboard"""
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect('/dashboard/')
+    else:
+        return admin_views.custom_admin_login(request)
+
+
+urlpatterns = [
     path('', frontend_views.index, name='frontend_index'),
     path('vehicles/', frontend_views.vehicle_list, name='frontend_vehicles'),
     path('vehicles/<int:pk>/', frontend_views.vehicle_detail, name='frontend_vehicle_detail'),
+    path('about/', frontend_views.about, name='frontend_about'),
+    path('contact/', frontend_views.contact, name='frontend_contact'),
     path('ajax/models/', frontend_views.ajax_models, name='ajax_models'),
-    # ✅ Keep Django's built-in admin
-    path('admin/', admin.site.urls),
+    
+    # ✅ Admin completely redirects to dashboard - no ugly Django admin
+    path('admin/', admin_redirect, name='admin_redirect'),
+    path('admin/login/', admin_views.custom_admin_login, name='admin_login'),
+    
+    # ✅ Custom login/logout
+    path('login/', admin_views.custom_admin_login, name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 
     # ✅ Use a different prefix for your custom dashboard
     path('dashboard/', views.admin_dashboard, name="admin_dashboard"),
@@ -44,5 +64,6 @@ urlpatterns = [
 
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve static and media files in all environments
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

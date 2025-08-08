@@ -1,257 +1,627 @@
 {% extends "admin_custom/base_admin.html" %}
-{% block title %}{% if car %}Edit Car{% else %}Add Car{% endif %}{% endblock %}
+{% block title %}{% if car %}Edit Vehicle{% else %}Add New Vehicle{% endif %} - MoeAuto Admin{% endblock %}
 
 {% block extra_css %}
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 <style>
     .form-section {
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-        margin-bottom: 20px;
+        background: var(--white);
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        margin-bottom: 25px;
+        border: 1px solid rgba(230, 57, 70, 0.1);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
     }
+    
+    .form-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient);
+    }
+    
+    .form-section:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+    }
+    
     .form-section h5 {
+        font-family: 'Poppins', sans-serif;
         font-weight: 600;
-        color: #495057;
-        margin-bottom: 15px;
+        color: var(--dark-gray);
+        margin-bottom: 20px;
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
+    
+    .form-section h5 i {
+        color: var(--primary-red);
+        font-size: 1.4rem;
+    }
+    
+    /* Enhanced Form Controls */
+    .form-control, .form-select {
+        border: 2px solid rgba(230, 57, 70, 0.1) !important;
+        border-radius: 12px !important;
+        padding: 15px 18px !important;
+        font-size: 1rem !important;
+        font-weight: 500 !important;
+        transition: all 0.3s ease !important;
+        background: rgba(255, 255, 255, 0.8) !important;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-red) !important;
+        box-shadow: 0 0 0 0.2rem rgba(230, 57, 70, 0.15) !important;
+        background: var(--white) !important;
+        transform: scale(1.02) !important;
+    }
+    
+    .form-label {
+        font-weight: 600 !important;
+        color: var(--dark-gray) !important;
+        margin-bottom: 8px !important;
+        font-size: 0.95rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    textarea.form-control {
+        min-height: 120px !important;
+        resize: vertical !important;
+    }
+    
+    /* Image Preview Enhanced */
     .img-preview {
-        width: 120px;
-        height: 80px;
+        width: 150px;
+        height: 100px;
         object-fit: cover;
-        border-radius: 8px;
-        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        border: 3px solid rgba(230, 57, 70, 0.1);
+        transition: all 0.3s ease;
+        cursor: pointer;
     }
-    /* ✅ Dual list equipment */
+    
+    .img-preview:hover {
+        transform: scale(1.05);
+        border-color: var(--primary-red);
+        box-shadow: var(--shadow);
+    }
+    
+    /* Enhanced Dual List Equipment */
     .dual-list {
         display: flex;
         justify-content: space-between;
-        gap: 15px;
+        gap: 20px;
+        align-items: stretch;
     }
+    
+    .dual-list-column {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 12px;
+        padding: 20px;
+        border: 2px solid rgba(230, 57, 70, 0.1);
+    }
+    
+    .dual-list-header {
+        font-weight: 600;
+        color: var(--dark-gray);
+        margin-bottom: 15px;
+        text-align: center;
+        font-size: 1.1rem;
+    }
+    
     .dual-list select {
-    width: 100%;
-    min-height: 250px;
-    font-size: 1.2rem;
-    padding: 10px;
-}
-
-    .dual-list option {
-        padding: 12px 8px;
-        font-size: 1.2rem;
+        width: 100% !important;
+        min-height: 300px !important;
+        border: 2px solid rgba(230, 57, 70, 0.1) !important;
+        border-radius: 12px !important;
+        padding: 15px !important;
+        font-size: 1rem !important;
+        background: var(--white) !important;
     }
+    
+    .dual-list option {
+        padding: 12px 8px !important;
+        font-size: 1rem !important;
+        border-radius: 6px !important;
+        margin-bottom: 2px !important;
+    }
+    
+    .dual-list option:hover {
+        background: rgba(230, 57, 70, 0.1) !important;
+    }
+    
     .dual-list-buttons {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        gap: 5px;
+        gap: 10px;
+        min-width: 80px;
     }
+    
+    .dual-list-buttons .btn {
+        border-radius: 50% !important;
+        width: 50px !important;
+        height: 50px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-weight: bold !important;
+        font-size: 1.2rem !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .dual-list-buttons .btn:hover {
+        transform: scale(1.1) !important;
+        box-shadow: var(--shadow) !important;
+    }
+    
+    /* Image Gallery Enhanced */
+    .image-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .image-item {
+        position: relative;
+        background: var(--white);
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+        border: 2px solid rgba(230, 57, 70, 0.1);
+    }
+    
+    .image-item:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+    }
+    
+    .image-item img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+    
+    .delete-image-btn {
+        width: 100% !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .delete-image-btn:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4) !important;
+    }
+    
+    /* Checkbox Enhancement */
+    .form-check {
+        background: rgba(230, 57, 70, 0.05);
+        padding: 15px 20px;
+        border-radius: 12px;
+        border: 2px solid rgba(230, 57, 70, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-check:hover {
+        background: rgba(230, 57, 70, 0.1);
+        border-color: var(--primary-red);
+    }
+    
+    .form-check-input {
+        width: 20px !important;
+        height: 20px !important;
+        border-radius: 4px !important;
+        border: 2px solid var(--primary-red) !important;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--primary-red) !important;
+        border-color: var(--primary-red) !important;
+    }
+    
+    .form-check-label {
+        font-weight: 600 !important;
+        color: var(--dark-gray) !important;
+        font-size: 1.1rem !important;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        background: var(--white);
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(230, 57, 70, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+    
+    .btn-save {
+        background: var(--gradient) !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 15px 30px !important;
+        font-weight: 600 !important;
+        font-size: 1.1rem !important;
+        color: var(--white) !important;
+        transition: all 0.3s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        min-width: 200px !important;
+        justify-content: center !important;
+    }
+    
+    .btn-save:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: var(--shadow-hover) !important;
+        color: var(--white) !important;
+    }
+    
+    .btn-back {
+        background: var(--medium-gray) !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 15px 25px !important;
+        font-weight: 600 !important;
+        color: var(--white) !important;
+        transition: all 0.3s ease !important;
+        text-decoration: none !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+    
+    .btn-back:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: var(--shadow) !important;
+        color: var(--white) !important;
+        text-decoration: none !important;
+    }
+    
+    /* Mobile Responsive */
     @media (max-width: 768px) {
         .dual-list {
             flex-direction: column;
-            align-items: stretch;
+            gap: 15px;
         }
-        #available-equipment {
-            order: 1;
-        }
+        
         .dual-list-buttons {
-            order: 2;
             flex-direction: row;
             justify-content: center;
         }
-        #selected-equipment {
-            order: 3;
+        
+        .action-buttons {
+            flex-direction: column;
         }
-        .dual-list > .d-flex {
+        
+        .btn-save, .btn-back {
             width: 100% !important;
-  }
+        }
+        
+        .form-section {
+            padding: 20px;
+        }
     }
-    input, select, textarea {
-        border-radius: 6px !important;
-        font-size: 1rem !important;
-        padding: 10px !important;
+    
+    /* Loading Animation */
+    .loading-save {
+        position: relative;
+    }
+    
+    .loading-save::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255,255,255,.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    
+    @keyframes spin {
+        to { transform: translateY(-50%) rotate(360deg); }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
-        <h1 class="text-primary">
-            <i class="bi bi-car-front"></i> {% if car %}Edit Car{% else %}Add Car{% endif %}
-        </h1>
+<div class="page-header">
+    <h1><i class="fas fa-car me-3"></i>{% if car %}Edit Vehicle{% else %}Add New Vehicle{% endif %}</h1>
+    <p>{% if car %}Update vehicle information and manage inventory{% else %}Add a new vehicle to your inventory{% endif %}</p>
+</div>
+
+<form method="post" enctype="multipart/form-data" id="vehicleForm">
+    {% csrf_token %}
+
+    <!-- Basic Information -->
+    <div class="form-section">
+        <h5><i class="fas fa-info-circle"></i>Basic Information</h5>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+                {{ form.title }}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.price.id_for_label }}" class="form-label">{{ form.price.label }}</label>
+                <div class="input-group">
+                    {{ form.price }}
+                    <span class="input-group-text">€</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.brand.id_for_label }}" class="form-label">{{ form.brand.label }}</label>
+                {{ form.brand }}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.model_name.id_for_label }}" class="form-label">{{ form.model_name.label }}</label>
+                {{ form.model_name }}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.year.id_for_label }}" class="form-label">{{ form.year.label }}</label>
+                {{ form.year }}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.color.id_for_label }}" class="form-label">{{ form.color.label }}</label>
+                {{ form.color }}
+            </div>
+            <div class="col-12">
+                <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                {{ form.description }}
+            </div>
+            <div class="col-md-6">
+                <div class="form-check">
+                    {{ form.sold }}
+                    <label for="{{ form.sold.id_for_label }}" class="form-check-label">
+                        <i class="fas fa-handshake me-2"></i>{{ form.sold.label }}
+                    </label>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <!-- ✅ BASIC INFO -->
-        <div class="form-section">
-            <h5><i class="bi bi-info-circle"></i> Basic Information</h5>
-            <div class="row g-3">
-                <div class="col-md-6">{{ form.title.label_tag }}{{ form.title }}</div>
-                <div class="col-md-6">{{ form.price.label_tag }}{{ form.price }}</div>
-                <div class="col-md-6">{{ form.brand.label_tag }}{{ form.brand }}</div>
-                <div class="col-md-6">{{ form.model_name.label_tag }}{{ form.model_name }}</div>
-                <div class="col-md-6">{{ form.year.label_tag }}{{ form.year }}</div>
-                <div class="col-md-6">{{ form.color.label_tag }}{{ form.color }}</div>
-                <div class="col-12">{{ form.description.label_tag }} {{ form.description }}</div>
-                <div class="col-md-6 d-flex align-items-center">{{ form.sold }}<label for="{{ form.sold.id_for_label }}" class="ms-2">{{ form.sold.label }}</label></div>
+    <!-- Vehicle Specifications -->
+    <div class="form-section">
+        <h5><i class="fas fa-cogs"></i>Vehicle Specifications</h5>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <label for="{{ form.transmission.id_for_label }}" class="form-label">{{ form.transmission.label }}</label>
+                {{ form.transmission }}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.fuel_type.id_for_label }}" class="form-label">{{ form.fuel_type.label }}</label>
+                {{ form.fuel_type }}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.body_type.id_for_label }}" class="form-label">{{ form.body_type.label }}</label>
+                {{ form.body_type }}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.engine_capacity.id_for_label }}" class="form-label">{{ form.engine_capacity.label }}</label>
+                <div class="input-group">
+                    {{ form.engine_capacity }}
+                    <span class="input-group-text">L</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.kilowatts.id_for_label }}" class="form-label">{{ form.kilowatts.label }}</label>
+                <div class="input-group">
+                    {{ form.kilowatts }}
+                    <span class="input-group-text">kW</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.seats.id_for_label }}" class="form-label">{{ form.seats.label }}</label>
+                {{ form.seats }}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.registration_type.id_for_label }}" class="form-label">{{ form.registration_type.label }}</label>
+                {{ form.registration_type }}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.mileage.id_for_label }}" class="form-label">{{ form.mileage.label }}</label>
+                <div class="input-group">
+                    {{ form.mileage }}
+                    <span class="input-group-text">km</span>
+                </div>
             </div>
         </div>
+    </div>
 
-        <!-- ✅ DETAILS -->
-        <div class="form-section">
-            <h5><i class="bi bi-gear"></i> Car Details</h5>
-            <div class="row g-3">
-                <div class="col-md-4">{{ form.transmission.label_tag }}{{ form.transmission }}</div>
-                <div class="col-md-4">{{ form.fuel_type.label_tag }}{{ form.fuel_type }}</div>
-                <div class="col-md-4">{{ form.body_type.label_tag }}{{ form.body_type }}</div>
-                <div class="col-md-4">{{ form.engine_capacity.label_tag }}{{ form.engine_capacity }}</div>
-                <div class="col-md-4">{{ form.kilowatts.label_tag }}{{ form.kilowatts }}</div>
-                <div class="col-md-4">{{ form.seats.label_tag }}{{ form.seats }}</div>
-                <div class="col-md-4">{{ form.registration_type.label_tag }}{{ form.registration_type }}</div>
-                <div class="col-md-4">{{ form.mileage.label_tag }} {{ form.mileage }}</div>
-            </div>
-        </div>
-
-        <!-- ✅ EQUIPMENT (Dual List) -->
-        <div class="form-section">
-            <h5><i class="bi bi-tools"></i> Equipment</h5>
-            <div class="dual-list">
-                <div class="d-flex flex-column" style="width:48%">
-                    <button type="button" class="btn btn-sm btn-outline-primary mb-2" id="select-all-left">Select All</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary mb-2" id="unselect-all-left">Unselect All</button>
-                    <select id="available-equipment" multiple class="form-select">
-                        {% for eq in all_equipment %}
-                            {% if eq not in selected_equipment %}
-                                <option value="{{ eq.id }}">{{ eq.name }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
+    <!-- Equipment Selection -->
+    <div class="form-section">
+        <h5><i class="fas fa-tools"></i>Vehicle Equipment</h5>
+        <p class="text-muted mb-4">Select the equipment and features included with this vehicle</p>
+        <div class="dual-list">
+            <div class="dual-list-column">
+                <div class="dual-list-header">Available Equipment</div>
+                <div class="mb-3">
+                    <button type="button" class="btn btn-sm btn-outline-primary me-2" id="select-all-left">
+                        <i class="fas fa-check-double"></i> Select All
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="unselect-all-left">
+                        <i class="fas fa-times"></i> Clear
+                    </button>
                 </div>
-                <div class="dual-list-buttons">
-                    <button type="button" class="btn btn-outline-primary btn-sm" id="add-equipment">&gt;&gt;</button>
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id="remove-equipment">&lt;&lt;</button>
-                </div>
-                <div class="d-flex flex-column" style="width:48%">
-                    <button type="button" class="btn btn-sm btn-outline-primary mb-2" id="select-all-right">Select All</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary mb-2" id="unselect-all-right">Unselect All</button>
-                    <select id="selected-equipment" name="equipment" multiple class="form-select">
-                        {% for eq in selected_equipment %}
+                <select id="available-equipment" multiple class="form-select">
+                    {% for eq in all_equipment %}
+                        {% if eq not in selected_equipment %}
                             <option value="{{ eq.id }}">{{ eq.name }}</option>
-                        {% endfor %}
-                    </select>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="dual-list-buttons">
+                <button type="button" class="btn btn-primary" id="add-equipment" title="Add selected equipment">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <button type="button" class="btn btn-secondary" id="remove-equipment" title="Remove selected equipment">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+            
+            <div class="dual-list-column">
+                <div class="dual-list-header">Selected Equipment</div>
+                <div class="mb-3">
+                    <button type="button" class="btn btn-sm btn-outline-primary me-2" id="select-all-right">
+                        <i class="fas fa-check-double"></i> Select All
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="unselect-all-right">
+                        <i class="fas fa-times"></i> Clear
+                    </button>
                 </div>
+                <select id="selected-equipment" name="equipment" multiple class="form-select">
+                    {% for eq in selected_equipment %}
+                        <option value="{{ eq.id }}">{{ eq.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
-        <!-- ✅ MAIN IMAGE -->
-        <div class="form-section">
-            <h5><i class="bi bi-image"></i> Main Image</h5>
-            <div class="row">
-                      <div class="col-md-6">
-                    <label for="{{ form.main_image.id_for_label }}">{{ form.main_image.label }}</label>
-                    <input
-                        type="file"
-                        name="{{ form.main_image.name }}"
-                        id="{{ form.main_image.id_for_label }}"
-                        class="form-control"
-                        accept="image/*"
-                    >
+    </div>
 
-                    {% if car and car.main_image %}
-                        <img src="{{ car.main_image.url }}" class="img-preview mt-2">
-                    {% endif %}
-
-                    {% if form.main_image.errors %}
-                        <div class="text-danger">{{ form.main_image.errors }}</div>
-                    {% endif %}
-                </div>
+    <!-- Main Image -->
+    <div class="form-section">
+        <h5><i class="fas fa-camera"></i>Main Vehicle Image</h5>
+        <div class="row">
+            <div class="col-md-6">
+                <label for="{{ form.main_image.id_for_label }}" class="form-label">{{ form.main_image.label }}</label>
+                <input type="file" name="{{ form.main_image.name }}" id="{{ form.main_image.id_for_label }}" 
+                       class="form-control" accept="image/*">
+                <div class="form-text">Recommended size: 800x600px. Max file size: 5MB</div>
+                {% if form.main_image.errors %}
+                    <div class="text-danger mt-2">{{ form.main_image.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                {% if car and car.main_image %}
+                    <div class="text-center">
+                        <label class="form-label">Current Main Image</label><br>
+                        <img src="{{ car.main_image.url }}" class="img-preview" alt="Current main image">
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted">
+                        <i class="fas fa-image" style="font-size: 4rem; opacity: 0.3;"></i>
+                        <div class="mt-2">No main image uploaded</div>
+                    </div>
+                {% endif %}
             </div>
         </div>
-        <!-- ✅ IMAGES -->
-        <div class="form-section">
-            <h5><i class="bi bi-images"></i> Uploaded Images</h5>
-            <div class="d-flex flex-wrap gap-3 mb-3" id="image-container">
-                {% for img in images %}
-                <div class="text-center" id="img-{{ img.id }}">
-                    <img src="{{ img.image.url }}" class="img-preview">
-                    <button type="button" data-id="{{ img.id }}" class="btn btn-danger btn-sm mt-2 delete-image-btn">🗑 Delete</button>
-                </div>
-                {% empty %}
-                <p class="text-muted">No extra images uploaded.</p>
-                {% endfor %}
-            </div>
+    </div>
 
-            <h5 class="mt-3">Add New Images</h5>
+    <!-- Additional Images -->
+    <div class="form-section">
+        <h5><i class="fas fa-images"></i>Additional Images</h5>
+        <div class="image-gallery" id="image-container">
+            {% for img in images %}
+            <div class="image-item" id="img-{{ img.id }}">
+                <img src="{{ img.image.url }}" alt="Vehicle image">
+                <button type="button" data-id="{{ img.id }}" class="btn btn-danger btn-sm delete-image-btn">
+                    <i class="fas fa-trash me-1"></i>Delete
+                </button>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center text-muted py-4">
+                <i class="fas fa-images" style="font-size: 3rem; opacity: 0.3;"></i>
+                <div class="mt-2">No additional images uploaded</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-4">
+            <label class="form-label">Add New Images</label>
             {{ image_form.images }}
+            <div class="form-text">You can select multiple images at once. Max 10 images total.</div>
         </div>
+    </div>
 
-        <!-- ✅ Save + Back Buttons -->
-        <div class="d-flex justify-content-between align-items-center mt-3">
-            <a href="{% url 'admin_car_list' %}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> Back
-            </a>
-            <button type="submit" class="btn btn-success btn-lg">
-                ✅ Save Changes
-            </button>
-        </div>
-    </form>
-</div>
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a href="{% url 'admin_car_list' %}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+        <button type="submit" class="btn-save" id="saveButton">
+            <i class="fas fa-save"></i>
+            <span id="saveText">{% if car %}Update Vehicle{% else %}Save Vehicle{% endif %}</span>
+        </button>
+    </div>
+</form>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const brandField  = document.getElementById("id_brand");
-  const modelField  = document.getElementById("id_model_name");
-  // grab whatever model is already selected ("" on a fresh add)
-  const preselect   = modelField.value;
+    // Enhanced Brand/Model Loading
+    const brandField = document.getElementById("id_brand");
+    const modelField = document.getElementById("id_model_name");
+    const preselect = modelField.value;
 
-  function loadModels(brandId, selected=null) {
-    if (!brandId) {
-      modelField.disabled  = true;
-      modelField.innerHTML = '<option value="">Select brand first</option>';
-      return;
+    function loadModels(brandId, selected = null) {
+        if (!brandId) {
+            modelField.disabled = true;
+            modelField.innerHTML = '<option value="">Select brand first</option>';
+            return;
+        }
+        
+        modelField.disabled = true;
+        modelField.innerHTML = '<option>Loading models...</option>';
+
+        fetch(`/ajax/load-models/?brand=${brandId}`)
+            .then(r => r.json())
+            .then(data => {
+                modelField.disabled = false;
+                modelField.innerHTML = '<option value="">Choose a model</option>';
+                data.forEach(m => {
+                    const o = document.createElement("option");
+                    o.value = m.id;
+                    o.textContent = m.name;
+                    if (selected && String(m.id) === String(selected)) {
+                        o.selected = true;
+                    }
+                    modelField.append(o);
+                });
+            })
+            .catch(() => {
+                modelField.disabled = true;
+                modelField.innerHTML = '<option>Error loading models</option>';
+            });
     }
-    modelField.disabled  = true;
-    modelField.innerHTML = '<option>Loading…</option>';
 
-    fetch(`/ajax/load-models/?brand=${brandId}`)
-      .then(r => r.json())
-      .then(data => {
-        modelField.disabled  = false;
-        modelField.innerHTML = '<option value="">Choose a model</option>';
-        data.forEach(m => {
-          const o = document.createElement("option");
-          o.value       = m.id;
-          o.textContent = m.name;
-          if (selected && String(m.id) === String(selected)) {
-            o.selected = true;
-          }
-          modelField.append(o);
-        });
-      })
-      .catch(() => {
-        modelField.disabled  = true;
-        modelField.innerHTML = '<option>Error loading</option>';
-      });
-  }
+    // Initialize model field
+    if (brandField.value) {
+        loadModels(brandField.value, preselect);
+    } else {
+        modelField.disabled = true;
+        modelField.innerHTML = '<option value="">Select brand first</option>';
+    }
 
-  // on page‐load: if brand is already chosen (i.e. in “edit”), populate & preselect
-  if (brandField.value) {
-    loadModels(brandField.value, preselect);
-  } else {
-    modelField.disabled  = true;
-    modelField.innerHTML = '<option value="">Select brand first</option>';
-  }
+    brandField.addEventListener("change", e => {
+        loadModels(e.target.value);
+    });
 
-  // whenever brand changes, repopulate (no preselect then)
-  brandField.addEventListener("change", e => {
-    loadModels(e.target.value);
-  });
-});
-
-
-    // ✅ Toggle selection + keep scroll
+    // Enhanced Equipment Dual List with Better UX
     function enableToggle(selectId) {
         const selectEl = document.getElementById(selectId);
         selectEl.addEventListener("mousedown", function(e) {
@@ -260,81 +630,248 @@ document.addEventListener("DOMContentLoaded", () => {
                 const scrollPos = selectEl.scrollTop;
                 e.target.selected = !e.target.selected;
                 setTimeout(() => selectEl.scrollTop = scrollPos, 0);
+                
+                // Visual feedback
+                e.target.style.backgroundColor = e.target.selected ? 'rgba(230, 57, 70, 0.2)' : '';
             }
         });
     }
+    
     enableToggle("available-equipment");
     enableToggle("selected-equipment");
 
-    // ✅ Move selected options
+    // Enhanced move options with animation
     function moveOptions(fromId, toId) {
         const from = document.getElementById(fromId);
         const to = document.getElementById(toId);
+        const movedOptions = [];
+        
         [...from.options].forEach(option => {
             if (option.selected) {
                 option.selected = false;
+                option.style.backgroundColor = '';
+                movedOptions.push(option);
                 to.appendChild(option);
             }
         });
+        
+        // Show success message if options were moved
+        if (movedOptions.length > 0) {
+            showToast(`Moved ${movedOptions.length} equipment item(s)`);
+        }
     }
+
     document.getElementById("add-equipment").onclick = () => moveOptions("available-equipment", "selected-equipment");
     document.getElementById("remove-equipment").onclick = () => moveOptions("selected-equipment", "available-equipment");
 
-    // ✅ Double-click move instantly
+    // Double-click functionality with visual feedback
     document.getElementById("available-equipment").ondblclick = e => {
         if (e.target.tagName === "OPTION") {
             document.getElementById("selected-equipment").appendChild(e.target);
+            showToast(`Added "${e.target.textContent}"`);
         }
     };
+    
     document.getElementById("selected-equipment").ondblclick = e => {
         if (e.target.tagName === "OPTION") {
             document.getElementById("available-equipment").appendChild(e.target);
+            showToast(`Removed "${e.target.textContent}"`);
         }
     };
 
-    // ✅ Select All / Unselect All
+    // Enhanced Select All/Clear functionality
     document.getElementById("select-all-left").onclick = () => {
-        for (let opt of document.getElementById("available-equipment").options) opt.selected = true;
+        const options = document.getElementById("available-equipment").options;
+        for (let opt of options) {
+            opt.selected = true;
+            opt.style.backgroundColor = 'rgba(230, 57, 70, 0.2)';
+        }
+        showToast(`Selected ${options.length} available items`);
     };
+    
     document.getElementById("unselect-all-left").onclick = () => {
-        for (let opt of document.getElementById("available-equipment").options) opt.selected = false;
+        const options = document.getElementById("available-equipment").options;
+        for (let opt of options) {
+            opt.selected = false;
+            opt.style.backgroundColor = '';
+        }
+        showToast('Cleared available selection');
     };
+    
     document.getElementById("select-all-right").onclick = () => {
-        for (let opt of document.getElementById("selected-equipment").options) opt.selected = true;
+        const options = document.getElementById("selected-equipment").options;
+        for (let opt of options) {
+            opt.selected = true;
+            opt.style.backgroundColor = 'rgba(230, 57, 70, 0.2)';
+        }
+        showToast(`Selected ${options.length} included items`);
     };
+    
     document.getElementById("unselect-all-right").onclick = () => {
-        for (let opt of document.getElementById("selected-equipment").options) opt.selected = false;
+        const options = document.getElementById("selected-equipment").options;
+        for (let opt of options) {
+            opt.selected = false;
+            opt.style.backgroundColor = '';
+        }
+        showToast('Cleared included selection');
     };
 
-    // ✅ Mark all selected equipment before submitting
-    document.querySelector("form").onsubmit = () => {
+    // Enhanced form submission with validation and loading state
+    const form = document.getElementById("vehicleForm");
+    const saveButton = document.getElementById("saveButton");
+    const saveText = document.getElementById("saveText");
+    
+    form.onsubmit = (e) => {
+        // Mark all selected equipment
         const selected = document.getElementById("selected-equipment");
         for (let option of selected.options) option.selected = true;
+        
+        // Add loading state
+        saveButton.classList.add('loading-save');
+        saveButton.disabled = true;
+        saveText.textContent = 'Saving...';
+        
+        // Basic validation
+        const title = document.getElementById("id_title").value.trim();
+        const price = document.getElementById("id_price").value.trim();
+        const brand = document.getElementById("id_brand").value;
+        
+        if (!title || !price || !brand) {
+            e.preventDefault();
+            saveButton.classList.remove('loading-save');
+            saveButton.disabled = false;
+            saveText.textContent = '{% if car %}Update Vehicle{% else %}Save Vehicle{% endif %}';
+            showToast('Please fill in all required fields', 'error');
+            return false;
+        }
+        
+        showToast('Saving vehicle information...');
     };
 
-// ✅ AJAX Delete Image (No refresh) - FIXED
-document.querySelectorAll(".delete-image-btn").forEach(btn => {
-    btn.addEventListener("click", function() {
-        const imgId = this.getAttribute("data-id");
-        fetch(`/ajax/delete-car-image/${imgId}/`, {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
-                "X-Requested-With": "XMLHttpRequest"  // ✅ FIXED HERE
+    // Enhanced AJAX Image Deletion with better UX
+    document.querySelectorAll(".delete-image-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const imgId = this.getAttribute("data-id");
+            const imageItem = document.getElementById(`img-${imgId}`);
+            
+            if (confirm('Are you sure you want to delete this image?')) {
+                // Add loading state
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                this.disabled = true;
+                
+                fetch(`/ajax/delete-car-image/${imgId}/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // Animate removal
+                        imageItem.style.transition = 'all 0.3s ease';
+                        imageItem.style.transform = 'scale(0)';
+                        imageItem.style.opacity = '0';
+                        
+                        setTimeout(() => {
+                            imageItem.remove();
+                        }, 300);
+                        
+                        showToast('Image deleted successfully');
+                    } else {
+                        showToast('Failed to delete image', 'error');
+                        this.innerHTML = '<i class="fas fa-trash me-1"></i>Delete';
+                        this.disabled = false;
+                    }
+                })
+                .catch(err => {
+                    console.error("AJAX Delete Error:", err);
+                    showToast('Error deleting image', 'error');
+                    this.innerHTML = '<i class="fas fa-trash me-1"></i>Delete';
+                    this.disabled = false;
+                });
             }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById(`img-${imgId}`).remove();
-                console.log(`✅ Deleted image #${imgId}, remaining: ${data.remaining}`);
-            } else {
-                alert("❌ Failed to delete image.");
-            }
-        })
-        .catch(err => console.error("AJAX Delete Error:", err));
+        });
     });
-});
 
+    // Form sections animation on page load
+    const formSections = document.querySelectorAll('.form-section');
+    formSections.forEach((section, index) => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            section.style.transition = 'all 0.6s ease';
+            section.style.opacity = '1';
+            section.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+
+    // Toast notification system
+    function showToast(message, type = 'success') {
+        // Remove existing toasts
+        const existingToasts = document.querySelectorAll('.toast-notification');
+        existingToasts.forEach(toast => toast.remove());
+        
+        const toast = document.createElement('div');
+        toast.className = `toast-notification toast-${type}`;
+        toast.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+            ${message}
+        `;
+        
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? 'var(--success-green)' : 'var(--danger-red)'};
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            z-index: 9999;
+            font-weight: 500;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Animate out and remove
+        setTimeout(() => {
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Enhanced file input preview
+    const mainImageInput = document.getElementById('id_main_image');
+    if (mainImageInput) {
+        mainImageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Create or update preview
+                    let preview = document.querySelector('.main-image-preview');
+                    if (!preview) {
+                        preview = document.createElement('img');
+                        preview.className = 'img-preview main-image-preview mt-3';
+                        mainImageInput.parentNode.appendChild(preview);
+                    }
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
 </script>
 {% endblock %}

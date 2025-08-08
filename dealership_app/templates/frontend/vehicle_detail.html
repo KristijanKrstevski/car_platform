@@ -1,311 +1,962 @@
 {% extends 'frontend/base.html' %}
 {% load static %}
 
-{% block title %}
-  {{ car.title }} – Детали
-{% endblock %}
+{% block title %}{{ car.brand.name }} {{ car.model_name.name }} - MoeAuto Macedonia{% endblock %}
 
 {% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* Заглавје */
-  .car-title {
-    font-size: 2rem;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 0.75rem;
-  }
-  .car-price {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #0d6efd;
-    text-align: center;
-    margin-top: 1rem;
-    padding-top: 0.5rem;
-    border-top: 2px solid #ddd; /* Линија под цената */
+  :root {
+    --primary-red: #E63946;
+    --primary-blue: #1D3557;
+    --light-gray: #F8F9FA;
+    --dark-gray: #212529;
+    --medium-gray: #6C757D;
+    --white: #FFFFFF;
+    --shadow: 0 4px 20px rgba(0,0,0,0.1);
+    --shadow-hover: 0 8px 30px rgba(0,0,0,0.15);
   }
 
-  /* Карусел */
-  #carCarousel {
-    border-radius: 0.5rem;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--light-gray);
   }
 
-  /* Thumbnails */
-  .thumbs {
-    overflow-x: auto;
-    white-space: nowrap;
-    margin-top: 0.75rem;
-    padding-bottom: 0.25rem;
-    -webkit-overflow-scrolling: touch;
-  }
-  .thumbs img {
-    width: 80px;
-    height: 60px;
-    object-fit: cover;
-    cursor: pointer;
-    margin-right: 0.5rem;
-    border-radius: 0.25rem;
-    border: 2px solid transparent;
-    transition: transform 0.2s, border-color 0.2s;
-  }
-  .thumbs img.active,
-  .thumbs img:hover {
-    transform: scale(1.1);
-    border-color: #0d6efd;
+  /* Header Section */
+  .detail-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-red) 100%);
+    color: var(--white);
+    padding: 40px 0;
+    margin-bottom: 30px;
   }
 
-  /* Спецификации */
-  .specifications-title {
-    font-weight: 700;
-    font-size: 1.5rem;
-    border-bottom: 3px solid #0d6efd;
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
-    color: #0d6efd;
-    text-align: center;
-  }
-  .specifications-row {
-    background: #fff;
-    border-radius: 0.5rem;
-    padding: 1rem 1rem 1.5rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Desktop default 4 колони */
-    gap: 1rem 0.5rem;
-    justify-items: center;
-    text-align: center;
-  }
-  @media (max-width: 991.98px) {
-    .specifications-row {
-      grid-template-columns: repeat(3, 1fr); /* Tablet 3 колони */
-    }
-  }
-  @media (max-width: 767.98px) {
-    .specifications-row {
-      grid-template-columns: repeat(2, 1fr); /* Телефон 2 колони */
-    }
-  }
-  .spec {
-    padding: 0.75rem 0.5rem;
-  }
-  .spec img {
-    height: 35px;
-    margin-bottom: 0.5rem;
-    filter: grayscale(20%);
-  }
-  .spec div {
-    font-weight: 600;
-    font-size: 1rem;
-    margin-bottom: 0.15rem;
-    color: #333;
-  }
-  .spec small {
-    font-size: 0.8rem;
-    color: #666;
+  .breadcrumb {
+    background: none;
+    padding: 0;
+    margin-bottom: 20px;
   }
 
-  /* Опрема */
-  .equipment-title {
-    font-weight: 700;
-    font-size: 1.5rem;
-    border-bottom: 3px solid #0d6efd;
-    margin-bottom: 1rem;
-    color: #0d6efd;
-    text-align: center;
+  .breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    color: rgba(255,255,255,0.7);
   }
-.equipment-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Desktop default 3 колони */
-  gap: 0.0rem 0.1rem;  /* Намален простор помеѓу */
-  padding: 0;
-  justify-items: center;
-}
-  @media (max-width: 991.98px) {
-    .equipment-row {
-      grid-template-columns: repeat(2, 1fr); /* Tablet 2 колони */
-    }
+
+  .breadcrumb-item a {
+    color: rgba(255,255,255,0.9);
+    text-decoration: none;
   }
-  @media (max-width: 767.98px) {
-    .equipment-row {
-      grid-template-columns: repeat(1, 1fr); /* Телефон 1 колона */
-    }
+
+  .breadcrumb-item.active {
+    color: var(--white);
   }
-  .equipment-col {
-    background: #f8f9fa;
-    border-radius: 0.5rem;
-    padding: 0.5rem 1rem;
-    font-weight: 600;
-    color: #444;
-    white-space: nowrap;
-    display: flex;
+
+  .back-btn {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    user-select: none;
-    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
-    text-align: center;
+    background: rgba(255,255,255,0.2);
+    color: var(--white);
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.3);
   }
 
-  /* Редослед и layout */
-  .detail-main {
-    max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 0 1rem;
+  .back-btn:hover {
+    background: rgba(255,255,255,0.3);
+    color: var(--white);
+    transform: translateX(-3px);
+    text-decoration: none;
   }
 
-  .top-section {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-    margin-bottom: 3rem;
+  .detail-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
   }
 
-  .car-info {
-    flex: 1 1 600px;
-    min-width: 320px;
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .detail-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
   }
 
-  .bottom-section {
-    width: 100%;
+  /* Main Content */
+  .detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
   }
-
-  /* Слики полни и со carousel */
-.carousel-inner img {
-  max-width: 100%;      /* Нека сликата се намалува ако е поширока од контејнер */
-  max-height: 1000px;   /* Максимална висина */
-  height: auto;         /* Задржи пропорции */
-  object-fit: contain;  /* Прикажи целата слика внатре без сечење */
-  margin-left: auto;
-  margin-right: auto;
-  display: block;       /* Центрирање */
-}
-
-  /* Responsive Adjustments */
-  @media (max-width: 991.98px) {
-    .car-info {
-      flex: 1 1 100%;
-      max-width: 100%;
-    }
-  }
-
+  
   @media (max-width: 576px) {
-    .car-title {
+    .detail-grid {
+      gap: 15px;
+    }
+    
+    .detail-container {
+      padding: 0 10px;
+    }
+    
+    .detail-title {
+      font-size: 1.5rem;
+    }
+    
+    .main-image {
+      padding-bottom: 65%; /* Even taller for very small screens */
+      max-height: 250px;
+      margin-bottom: 15px;
+    }
+    
+    .image-gallery,
+    .car-info,
+    .specifications-section,
+    .equipment-section {
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .car-price {
       font-size: 1.6rem;
     }
-    .car-price {
-      font-size: 1.4rem;
+    
+    .carousel-nav {
+      width: 35px;
+      height: 35px;
+      font-size: 0.9rem;
     }
-    .carousel-inner img {
-      max-height: 250px;
+    
+    .carousel-nav.prev {
+      left: 8px;
+    }
+    
+    .carousel-nav.next {
+      right: 8px;
+    }
+    
+    .image-badge {
+      padding: 3px 6px;
+      border-radius: 12px;
+      font-size: 0.6rem;
+      top: 15px;
+      left: 15px;
+    }
+    
+    .thumbnails {
+      gap: 6px;
+    }
+    
+    .thumbnail {
+      width: 50px;
+      height: 38px;
+    }
+    
+    .specs-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    
+    .spec-card {
+      padding: 15px 10px;
+    }
+    
+    .spec-card-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    
+    .spec-card-title {
+      font-size: 1rem;
+    }
+    
+    .spec-card-value {
+      font-size: 0.8rem;
+    }
+    
+    .equipment-item {
+      padding: 12px 15px;
+      font-size: 0.9rem;
+    }
+    
+    /* Additional mobile optimization */
+    .spec-item {
+      padding: 12px 0;
+    }
+    
+    .contact-btn {
+      padding: 12px 20px;
+      font-size: 0.95rem;
+    }
+    
+    /* Additional force for very small screens */
+    .detail-grid {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 15px;
+    }
+    
+    .detail-grid > .image-gallery,
+    .detail-grid > .car-info {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      flex: none !important;
+    }
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 40px;
+    margin-bottom: 40px;
+    min-height: 0; /* Allow grid items to shrink below their content size */
+    align-items: start; /* Prevent stretching */
+  }
+  
+  /* Force single column on all mobile and tablet screens */
+  @media (max-width: 1199px) {
+    .detail-grid {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 30px;
+    }
+    
+    .image-gallery,
+    .car-info {
+      width: 100% !important;
+      max-width: 100% !important;
+      flex: none !important;
+    }
+  }
+
+  /* Image Gallery */
+  .image-gallery {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+  }
+
+  .main-image {
+    position: relative;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--light-gray);
+    width: 100%;
+    height: 0;
+    padding-bottom: 60%; /* 16:10 aspect ratio */
+    max-height: 500px;
+  }
+
+  .main-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .image-badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: var(--primary-red);
+    color: var(--white);
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 0.75rem;
+  }
+
+  .thumbnails {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px 0;
+  }
+
+  .thumbnail {
+    width: 80px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .thumbnail:hover,
+  .thumbnail.active {
+    border-color: var(--primary-red);
+    transform: scale(1.05);
+  }
+
+  .thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Carousel Navigation */
+  .carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background: var(--primary-red);
+    border: none;
+    border-radius: 50%;
+    color: var(--white);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    box-shadow: var(--shadow);
+  }
+
+  .carousel-nav:hover {
+    background: #D62828;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .carousel-nav.prev {
+    left: 15px;
+  }
+
+  .carousel-nav.next {
+    right: 15px;
+  }
+
+  .carousel-nav i {
+    color: var(--white);
+  }
+
+  /* Car Info */
+  .car-info {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+    height: fit-content;
+  }
+
+  .car-price {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-red);
+    margin-bottom: 20px;
+  }
+
+  .price-label {
+    font-size: 0.9rem;
+    color: var(--medium-gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+
+  .quick-specs {
+    margin-bottom: 30px;
+  }
+
+  .spec-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #F1F3F4;
+  }
+
+  .spec-item:last-child {
+    border-bottom: none;
+  }
+
+  .spec-label {
+    font-weight: 500;
+    color: var(--medium-gray);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .spec-value {
+    font-weight: 600;
+    color: var(--dark-gray);
+  }
+
+  .spec-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--primary-red);
+  }
+
+  .contact-section {
+    background: var(--light-gray);
+    border-radius: 12px;
+    padding: 25px;
+  }
+
+  .contact-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--dark-gray);
+  }
+
+  .contact-btn {
+    background: var(--primary-red);
+    color: var(--white);
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .contact-btn:hover {
+    background: #D62828;
+    color: var(--white);
+    transform: translateY(-2px);
+  }
+
+  .contact-btn.secondary {
+    background: transparent;
+    color: var(--primary-blue);
+    border: 2px solid var(--primary-blue);
+  }
+
+  .contact-btn.secondary:hover {
+    background: var(--primary-blue);
+    color: var(--white);
+  }
+
+  /* Specifications Section */
+  .specifications-section {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow);
+  }
+
+  .section-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark-gray);
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+  }
+
+  .spec-card {
+    text-align: center;
+    padding: 25px;
+    border: 1px solid #F1F3F4;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .spec-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+  }
+
+  .spec-card-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-red);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    color: var(--white);
+    font-size: 1.5rem;
+    padding: 8px;
+  }
+
+  .spec-card-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+
+  .spec-card-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--dark-gray);
+    margin-bottom: 5px;
+  }
+
+  .spec-card-value {
+    color: var(--medium-gray);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Equipment Section */
+  .equipment-section {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: var(--shadow);
+  }
+
+  .equipment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+  }
+
+  .equipment-item {
+    background: var(--light-gray);
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    color: var(--dark-gray);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .equipment-item:hover {
+    background: var(--primary-red);
+    color: var(--white);
+  }
+
+  .equipment-icon {
+    color: var(--primary-red);
+    font-size: 1.1rem;
+  }
+
+  .equipment-item:hover .equipment-icon {
+    color: var(--white);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 992px) {
+    .detail-grid {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+    
+    .detail-title {
+      font-size: 2rem;
+    }
+    
+    .car-price {
+      font-size: 2rem;
+    }
+    
+    .specs-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    
+    .main-image {
+      padding-bottom: 56.25%; /* 16:9 aspect ratio for tablets */
+      max-height: 400px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .detail-grid {
+      gap: 20px;
+    }
+    
+    .detail-title {
+      font-size: 1.8rem;
+    }
+    
+    .main-image {
+      padding-bottom: 60%; /* Slightly taller for mobile */
+      max-height: 300px;
+    }
+    
+    .carousel-nav {
+      width: 40px;
+      height: 40px;
+      font-size: 1rem;
+    }
+    
+    .carousel-nav.prev {
+      left: 10px;
+    }
+    
+    .carousel-nav.next {
+      right: 10px;
+    }
+    
+    .image-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      top: 15px;
+      left: 15px;
+    }
+    
+    .equipment-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .image-gallery,
+    .car-info,
+    .specifications-section,
+    .equipment-section {
+      padding: 20px;
+    }
+    
+    .thumbnails {
+      padding: 5px 0;
+      gap: 8px;
+      justify-content: center;
+    }
+    
+    .thumbnail {
+      width: 60px;
+      height: 45px;
+    }
+    
+    .car-price {
+      font-size: 1.8rem;
+    }
+    
+    .detail-container {
+      padding: 0 10px;
+    }
+    
+    .vehicles-header {
+      padding: 30px 0;
+    }
+    
+    /* Ensure proper stacking order on mobile */
+    .detail-grid {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 20px;
+    }
+    
+    .detail-grid > * {
+      width: 100% !important;
+      max-width: 100% !important;
+      flex: none !important;
+      box-sizing: border-box;
+    }
+    
+    .image-gallery {
+      margin-bottom: 0 !important;
+    }
+    
+    .car-info {
+      margin-top: 0 !important;
     }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="detail-main">
-
-  <!-- Горен дел: Име, Карусел, Цена -->
-  <section class="top-section">
-    <div class="car-info">
-      <h1 class="car-title">{{ car.title }}</h1>
-
-      <div id="carCarousel" class="carousel slide w-100" data-bs-ride="carousel">
-        <div class="carousel-inner rounded shadow-sm">
-          {% for img in car.images.all %}
-            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-              <img src="{{ img.image.url }}" class="d-block w-100" alt="{{ car.title }}">
-            </div>
-          {% empty %}
-            <div class="carousel-item active">
-              <img src="{% static 'img/placeholder-car.png' %}" class="d-block w-100" alt="No image">
-            </div>
-          {% endfor %}
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-      </div>
-
-      <div class="thumbs mt-3 w-100 d-flex justify-content-center">
-        {% for img in car.images.all %}
-          <img src="{{ img.image.url }}" data-bs-target="#carCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
-               class="{% if forloop.first %}active{% endif %} rounded" alt="Thumbnail {{ forloop.counter }}">
-        {% endfor %}
-      </div>
-
-      <div class="car-price w-100 mt-3">{{ car.display_price }}</div>
+<!-- Header -->
+<section class="detail-header">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'frontend_index' %}">Дома</a></li>
+        <li class="breadcrumb-item">
+          {% if request.GET.back == 'vehicles' %}
+            <a href="{% url 'frontend_vehicles' %}?page={{ request.GET.page }}&brand={{ request.GET.brand }}&model_name={{ request.GET.model_name }}&transmission={{ request.GET.transmission }}&vehicle_body={{ request.GET.vehicle_body }}&fuel={{ request.GET.fuel }}&color={{ request.GET.color }}&for_beginners={{ request.GET.for_beginners }}&price_from={{ request.GET.price_from }}&price_to={{ request.GET.price_to }}&year_from={{ request.GET.year_from }}&sort_price={{ request.GET.sort_price }}&sort_mileage={{ request.GET.sort_mileage }}&sort_year={{ request.GET.sort_year }}#car-{{ car.pk }}">Возила</a>
+          {% else %}
+            <a href="{% url 'frontend_vehicles' %}">Возила</a>
+          {% endif %}
+        </li>
+        <li class="breadcrumb-item active">{{ car.brand.name }} {{ car.model_name.name }}</li>
+      </ol>
+    </nav>
+    
+    <!-- Back Button for Mobile -->
+    {% if request.GET.back == 'vehicles' %}
+    <div class="mb-3">
+      <a href="{% url 'frontend_vehicles' %}?page={{ request.GET.page }}&brand={{ request.GET.brand }}&model_name={{ request.GET.model_name }}&transmission={{ request.GET.transmission }}&vehicle_body={{ request.GET.vehicle_body }}&fuel={{ request.GET.fuel }}&color={{ request.GET.color }}&for_beginners={{ request.GET.for_beginners }}&price_from={{ request.GET.price_from }}&price_to={{ request.GET.price_to }}&year_from={{ request.GET.year_from }}&sort_price={{ request.GET.sort_price }}&sort_mileage={{ request.GET.sort_mileage }}&sort_year={{ request.GET.sort_year }}#car-{{ car.pk }}" class="back-btn">
+        <i class="fas fa-arrow-left me-2"></i>Назад кон листа
+      </a>
     </div>
-  </section>
-
-  <!-- Долен дел: Спецификации и Опрема -->
-  <section class="bottom-section">
-    <h3 class="specifications-title">Спецификации</h3>
-    <div class="specifications-row">
-       <div class="spec">
-        <img src="{% static 'setting.png' %}" alt="Марка и Модел" loading="lazy" />
-        <div>{{ car.brand.name }} {{ car.model_name.name }}</div>
-        <small>Марка / Модел</small>
-      </div>
-      <div class="spec">
-        <img src="{% static 'calendar.png' %}" alt="Година" loading="lazy" />
-        <div>{{ car.year }}</div>
-        <small>Година</small>
-      </div>
-      <div class="spec">
-        <img src="{% static 'mileage.png' %}" alt="Километража" loading="lazy" />
-        <div>{{ car.get_mileage_display }}</div>
-        <small>Километража</small>
-      </div>
-      <div class="spec">
-        <img src="{% static 'gas-station.png' %}" alt="Гориво" loading="lazy" />
-        <div>{{ car.get_fuel_type_display }}</div>
-        <small>Гориво</small>
-      </div>
-      <div class="spec">
-        <img src="{% static 'manual-transmission.png' %}" alt="Менувач" loading="lazy" />
-        <div>{{ car.get_transmission_display }}</div>
-        <small>Менувач</small>
-      </div>
-      <div class="spec">
-        <img src="{% static 'car-engine.png' %}" alt="Мотор" loading="lazy" />
-        <div>{{ car.engine_capacity }} cm³</div>
-        <small>Мотор</small>
-      </div>
-      <div class="spec">
-        <img src="{% static 'palette.png' %}" alt="Боја" loading="lazy" />
-        <div>{{ car.get_color_display }}</div>
-        <small>Боја</small>
-      </div>
-      <div class="spec">
-        <img src="{% static 'sedan.png' %}" alt="Каросерија" loading="lazy" />
-        <div>{{ car.get_body_type_display }}</div>
-        <small>Каросерија</small>
-      </div>
-    </div>
-
-    {% if car.equipment.exists %}
-      <h4 class="equipment-title">Опрема</h4>
-      <div class="equipment-row">
-        {% for eq in car.equipment.all %}
-          <div class="equipment-col">{{ eq.name }}</div>
-        {% endfor %}
-      </div>
     {% endif %}
-  </section>
+    <h1 class="detail-title">{{ car.title }}</h1>
+    <p class="detail-subtitle">Детални информации за возилото</p>
+  </div>
+</section>
 
+<!-- Main Content -->
+<div class="detail-container">
+  <div class="detail-grid">
+    <!-- Image Gallery -->
+    <div class="image-gallery">
+      <div class="main-image">
+        <img src="{{ car.main_image.url }}" alt="{{ car.title }}" id="mainImage">
+        <div class="image-badge">MoeAuto</div>
+        {% if car.images.all %}
+        <button class="carousel-nav prev" onclick="navigateCarousel('prev')" type="button">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="carousel-nav next" onclick="navigateCarousel('next')" type="button">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+        {% endif %}
+      </div>
+      
+      {% if car.images.all %}
+      <div class="thumbnails">
+        <div class="thumbnail active" onclick="changeMainImage('{{ car.main_image.url }}', this)">
+          <img src="{{ car.main_image.url }}" alt="Main">
+        </div>
+        {% for img in car.images.all %}
+        <div class="thumbnail" onclick="changeMainImage('{{ img.image.url }}', this)">
+          <img src="{{ img.image.url }}" alt="Gallery {{ forloop.counter }}">
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Car Info -->
+    <div class="car-info">
+      <div class="price-label">Цена</div>
+      <div class="car-price">{{ car.display_price }}</div>
+      
+      <div class="quick-specs">
+        <div class="spec-item">
+          <div class="spec-label">
+            <i class="fas fa-calendar-alt spec-icon"></i>
+            Година
+          </div>
+          <div class="spec-value">{{ car.year }}</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">
+            <i class="fas fa-tachometer-alt spec-icon"></i>
+            Километража
+          </div>
+          <div class="spec-value">{{ car.get_mileage_display }}</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">
+            <i class="fas fa-gas-pump spec-icon"></i>
+            Гориво
+          </div>
+          <div class="spec-value">{{ car.get_fuel_type_display }}</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">
+            <i class="fas fa-cog spec-icon"></i>
+            Менувач
+          </div>
+          <div class="spec-value">{{ car.get_transmission_display }}</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-label">
+            <i class="fas fa-car spec-icon"></i>
+            Каросерија
+          </div>
+          <div class="spec-value">{{ car.get_body_type_display }}</div>
+        </div>
+      </div>
+
+      <div class="contact-section">
+        <h3 class="contact-title">Заинтересирани сте?</h3>
+        <a href="tel:+38970123456" class="contact-btn">
+          <i class="fas fa-phone me-2"></i>Повикајте нас
+        </a>
+        <a href="mailto:info@moeauto.mk?subject=Интерес за {{ car.title }}" class="contact-btn secondary">
+          <i class="fas fa-envelope me-2"></i>Испратете е-мејл
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Specifications -->
+  <div class="specifications-section">
+    <h2 class="section-title">Детални спецификации</h2>
+    <div class="specs-grid">
+      <div class="spec-card">
+        <div class="spec-card-icon">
+          <img src="{% static 'setting.png' %}" alt="Марка и Модел" loading="lazy" />
+        </div>
+        <div class="spec-card-title">{{ car.brand.name }} {{ car.model_name.name }}</div>
+        <div class="spec-card-value">Марка / Модел</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card-icon">
+          <img src="{% static 'calendar.png' %}" alt="Година" loading="lazy" />
+        </div>
+        <div class="spec-card-title">{{ car.year }}</div>
+        <div class="spec-card-value">Година</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card-icon">
+          <img src="{% static 'mileage.png' %}" alt="Километража" loading="lazy" />
+        </div>
+        <div class="spec-card-title">{{ car.get_mileage_display }}</div>
+        <div class="spec-card-value">Километража</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card-icon">
+          <img src="{% static 'gas-station.png' %}" alt="Гориво" loading="lazy" />
+        </div>
+        <div class="spec-card-title">{{ car.get_fuel_type_display }}</div>
+        <div class="spec-card-value">Гориво</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card-icon">
+          <img src="{% static 'manual-transmission.png' %}" alt="Менувач" loading="lazy" />
+        </div>
+        <div class="spec-card-title">{{ car.get_transmission_display }}</div>
+        <div class="spec-card-value">Менувач</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card-icon">
+          <img src="{% static 'car-engine.png' %}" alt="Мотор" loading="lazy" />
+        </div>
+        <div class="spec-card-title">{{ car.engine_capacity }} cm³</div>
+        <div class="spec-card-value">Мотор</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card-icon">
+          <img src="{% static 'palette.png' %}" alt="Боја" loading="lazy" />
+        </div>
+        <div class="spec-card-title">{{ car.get_color_display }}</div>
+        <div class="spec-card-value">Боја</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card-icon">
+          <img src="{% static 'sedan.png' %}" alt="Каросерија" loading="lazy" />
+        </div>
+        <div class="spec-card-title">{{ car.get_body_type_display }}</div>
+        <div class="spec-card-value">Каросерија</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Equipment -->
+  {% if car.equipment.exists %}
+  <div class="equipment-section">
+    <h2 class="section-title">Опрема</h2>
+    <div class="equipment-grid">
+      {% for equipment in car.equipment.all %}
+      <div class="equipment-item">
+        <i class="fas fa-check equipment-icon"></i>
+        {{ equipment.name }}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 </div>
+
+<script>
+// Store all image sources for carousel navigation
+const imageUrls = [
+  '{{ car.main_image.url }}',
+  {% for img in car.images.all %}'{{ img.image.url }}',{% endfor %}
+];
+
+let currentImageIndex = 0;
+
+function changeMainImage(imageSrc, thumbnail) {
+  // Update main image
+  document.getElementById('mainImage').src = imageSrc;
+  
+  // Update current index
+  currentImageIndex = imageUrls.indexOf(imageSrc);
+  
+  // Update active thumbnail
+  document.querySelectorAll('.thumbnail').forEach(thumb => {
+    thumb.classList.remove('active');
+  });
+  if (thumbnail) {
+    thumbnail.classList.add('active');
+  }
+}
+
+function navigateCarousel(direction) {
+  if (imageUrls.length <= 1) return;
+  
+  if (direction === 'next') {
+    currentImageIndex = (currentImageIndex + 1) % imageUrls.length;
+  } else {
+    currentImageIndex = (currentImageIndex - 1 + imageUrls.length) % imageUrls.length;
+  }
+  
+  const newImageSrc = imageUrls[currentImageIndex];
+  document.getElementById('mainImage').src = newImageSrc;
+  
+  // Update active thumbnail
+  const thumbnails = document.querySelectorAll('.thumbnail');
+  thumbnails.forEach(thumb => thumb.classList.remove('active'));
+  if (thumbnails[currentImageIndex]) {
+    thumbnails[currentImageIndex].classList.add('active');
+  }
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowLeft') {
+    navigateCarousel('prev');
+  } else if (e.key === 'ArrowRight') {
+    navigateCarousel('next');
+  }
+});
+
+// Touch/swipe support for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+
+const mainImage = document.getElementById('mainImage');
+mainImage.addEventListener('touchstart', function(e) {
+  touchStartX = e.changedTouches[0].screenX;
+});
+
+mainImage.addEventListener('touchend', function(e) {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+});
+
+function handleSwipe() {
+  const swipeThreshold = 50;
+  const diff = touchStartX - touchEndX;
+  
+  if (Math.abs(diff) > swipeThreshold) {
+    if (diff > 0) {
+      navigateCarousel('next');
+    } else {
+      navigateCarousel('prev');
+    }
+  }
+}
+</script>
 {% endblock %}

@@ -9,6 +9,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/custom.css' %}" />
   {% block extra_css %}{% endblock %}
   <style>
     /* Footer stick to bottom if content is short */
@@ -34,7 +36,7 @@
   <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm border-bottom">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center" href="{% url 'frontend_index' %}" style="font-family: 'Poppins', sans-serif; font-size: 1.6rem; font-weight: 700; color: #E63946; text-decoration: none;">
-        <i class="fas fa-car me-2" style="font-size: 1.4rem;"></i>AutoWelt
+        <i class="fas fa-car me-2" style="font-size: 1.4rem;"></i>MoeAuto
       </a>
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
         aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,18 +51,18 @@
             <a class="nav-link px-3 py-2" href="{% url 'frontend_vehicles' %}" style="color: #212529; font-weight: 500; transition: all 0.3s ease;">Возила</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link px-3 py-2" href="#" style="color: #212529; font-weight: 500; transition: all 0.3s ease;">За нас</a>
+            <a class="nav-link px-3 py-2" href="{% url 'frontend_about' %}" style="color: #212529; font-weight: 500; transition: all 0.3s ease;">За нас</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link px-3 py-2" href="#" style="color: #212529; font-weight: 500; transition: all 0.3s ease;">Контакт</a>
+            <a class="nav-link px-3 py-2" href="{% url 'frontend_contact' %}" style="color: #212529; font-weight: 500; transition: all 0.3s ease;">Контакт</a>
           </li>
         </ul>
         <div class="d-flex align-items-center">
-          <a href="tel:+38970123456" class="btn btn-outline-primary me-2" style="border-color: #E63946; color: #E63946;">
-            <i class="fas fa-phone me-1"></i>+389 70 123 456
+          <a href="tel:+38970123456" class="btn btn-outline-primary me-2 d-none d-md-inline-flex" style="border-color: #E63946; color: #E63946;">
+            <i class="fas fa-phone me-1"></i><span class="d-none d-lg-inline">+389 70 123 456</span><span class="d-lg-none">Повици</span>
           </a>
           <a href="{% url 'frontend_vehicles' %}" class="btn btn-primary" style="background: #E63946; border-color: #E63946;">
-            Пребарај возила
+            <span class="d-none d-sm-inline">Пребарај </span>возила
           </a>
         </div>
       </div>
@@ -87,6 +89,54 @@
       background: #D62828 !important;
       border-color: #D62828 !important;
     }
+    
+    /* Mobile navbar improvements */
+    @media (max-width: 991px) {
+      .navbar-brand {
+        font-size: 1.4rem;
+      }
+      
+      .navbar-nav {
+        text-align: center;
+        margin-top: 1rem;
+      }
+      
+      .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #f8f9fa;
+      }
+      
+      .navbar-nav .nav-link:last-child {
+        border-bottom: none;
+      }
+      
+      .d-flex.align-items-center {
+        justify-content: center;
+        margin-top: 1rem;
+        gap: 0.5rem;
+      }
+      
+      .btn {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .navbar-brand {
+        font-size: 1.2rem;
+      }
+      
+      .btn {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+      }
+      
+      .container {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
   </style>
 
   <!-- Main Content -->
@@ -95,116 +145,400 @@
   </main>
 
   <!-- Modern Footer -->
-  <footer class="bg-light border-top mt-auto" style="background: #F8F9FA !important;">
-    <div class="container py-5">
-      <div class="row">
-        <div class="col-lg-4 col-md-6 mb-4">
-          <div class="mb-3">
-            <h5 style="font-family: 'Poppins', sans-serif; font-weight: 700; color: #E63946; font-size: 1.4rem;">
-              <i class="fas fa-car me-2"></i>AutoWelt
-            </h5>
-            <p style="color: #6C757D; line-height: 1.6;">
-              Водечка компанија за продажба на квалитетни автомобили во Македонија. 
-              Веќе 15+ години ви помагаме да го најдете совршениот автомобил.
-            </p>
-          </div>
-          <div class="d-flex gap-3">
-            <a href="#" style="color: #6C757D; font-size: 1.3rem; transition: color 0.3s ease;">
-              <i class="fab fa-facebook-f"></i>
-            </a>
-            <a href="#" style="color: #6C757D; font-size: 1.3rem; transition: color 0.3s ease;">
-              <i class="fab fa-instagram"></i>
-            </a>
-            <a href="#" style="color: #6C757D; font-size: 1.3rem; transition: color 0.3s ease;">
-              <i class="fab fa-youtube"></i>
-            </a>
-            <a href="#" style="color: #6C757D; font-size: 1.3rem; transition: color 0.3s ease;">
-              <i class="fab fa-linkedin-in"></i>
-            </a>
-          </div>
+  <footer class="modern-footer">
+    <div class="footer-content">
+      <!-- Brand Section -->
+      <div class="footer-section footer-brand">
+        <div class="brand-info">
+          <h5 class="brand-title">
+            <i class="fas fa-car"></i>MoeAuto
+          </h5>
+          <p class="brand-description">
+            Водечка компанија за продажба на квалитетни автомобили во Македонија. 
+            Веќе 15+ години ви помагаме да го најдете совршениот автомобил.
+          </p>
         </div>
-        
-        <div class="col-lg-2 col-md-6 mb-4">
-          <h6 style="font-weight: 600; color: #212529; margin-bottom: 20px;">Линкови</h6>
-          <ul class="list-unstyled">
-            <li class="mb-2">
-              <a href="{% url 'frontend_index' %}" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Дома</a>
-            </li>
-            <li class="mb-2">
-              <a href="{% url 'frontend_vehicles' %}" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Возила</a>
-            </li>
-            <li class="mb-2">
-              <a href="#" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">За нас</a>
-            </li>
-            <li class="mb-2">
-              <a href="#" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Контакт</a>
-            </li>
-          </ul>
-        </div>
-        
-        <div class="col-lg-3 col-md-6 mb-4">
-          <h6 style="font-weight: 600; color: #212529; margin-bottom: 20px;">Услуги</h6>
-          <ul class="list-unstyled">
-            <li class="mb-2">
-              <a href="#" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Купување автомобил</a>
-            </li>
-            <li class="mb-2">
-              <a href="#" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Продажба автомобил</a>
-            </li>
-            <li class="mb-2">
-              <a href="#" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Финансирање</a>
-            </li>
-            <li class="mb-2">
-              <a href="#" style="color: #6C757D; text-decoration: none; transition: color 0.3s ease;">Проценка</a>
-            </li>
-          </ul>
-        </div>
-        
-        <div class="col-lg-3 col-md-6 mb-4">
-          <h6 style="font-weight: 600; color: #212529; margin-bottom: 20px;">Контакт</h6>
-          <div class="mb-3">
-            <div class="d-flex align-items-center mb-2">
-              <i class="fas fa-phone text-primary me-2" style="color: #E63946 !important;"></i>
-              <span style="color: #6C757D;">+389 70 123 456</span>
-            </div>
-            <div class="d-flex align-items-center mb-2">
-              <i class="fas fa-envelope text-primary me-2" style="color: #E63946 !important;"></i>
-              <span style="color: #6C757D;">info@autowelt.mk</span>
-            </div>
-            <div class="d-flex align-items-start">
-              <i class="fas fa-map-marker-alt text-primary me-2 mt-1" style="color: #E63946 !important;"></i>
-              <span style="color: #6C757D;">ул. Македонија 123<br>1000 Скопје, Македонија</span>
-            </div>
-          </div>
+        <div class="social-links">
+          <a href="#" class="social-link">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="#" class="social-link">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" class="social-link">
+            <i class="fab fa-youtube"></i>
+          </a>
+          <a href="#" class="social-link">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
         </div>
       </div>
       
-      <hr style="border-color: #DEE2E6; margin: 2rem 0;">
+      <!-- Links Section -->
+      <div class="footer-section footer-links">
+        <h6 class="footer-title">Линкови</h6>
+        <ul class="footer-list">
+          <li><a href="{% url 'frontend_index' %}">Дома</a></li>
+          <li><a href="{% url 'frontend_vehicles' %}">Возила</a></li>
+          <li><a href="#">За нас</a></li>
+          <li><a href="#">Контакт</a></li>
+        </ul>
+      </div>
       
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <p style="color: #6C757D; margin: 0; font-size: 0.9rem;">
-            &copy; {{ now.year }} AutoWelt. Сите права задржани.
-          </p>
-        </div>
-        <div class="col-md-6 text-md-end">
-          <div class="d-flex justify-content-md-end gap-4 mt-3 mt-md-0">
-            <a href="#" style="color: #6C757D; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Приватност</a>
-            <a href="#" style="color: #6C757D; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Услови</a>
+      <!-- Services Section -->
+      <div class="footer-section footer-services">
+        <h6 class="footer-title">Услуги</h6>
+        <ul class="footer-list">
+          <li><a href="#">Купување автомобил</a></li>
+          <li><a href="#">Продажба автомобил</a></li>
+          <li><a href="#">Финансирање</a></li>
+          <li><a href="#">Проценка</a></li>
+        </ul>
+      </div>
+      
+      <!-- Contact Section -->
+      <div class="footer-section footer-contact">
+        <h6 class="footer-title">Контакт</h6>
+        <div class="contact-info">
+          <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <span>+389 70 123 456</span>
           </div>
+          <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <span>info@moeauto.mk</span>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>ул. Македонија 123<br>1000 Скопје, Македонија</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <p class="copyright">
+          &copy; {{ now.year }} MoeAuto. Сите права задржани.
+        </p>
+        <div class="footer-bottom-links">
+          <a href="#">Приватност</a>
+          <a href="#">Услови</a>
         </div>
       </div>
     </div>
   </footer>
   
   <style>
-    footer a:hover {
-      color: #E63946 !important;
+    /* Modern Footer Styles */
+    .modern-footer {
+      background: #F8F9FA !important;
+      border-top: 1px solid #E9ECEF;
+      margin-top: auto;
+      flex-shrink: 0;
     }
-    
-    footer .fab:hover {
-      color: #E63946 !important;
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 2rem 2rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 3rem;
+    }
+
+    .footer-section {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Brand Section */
+    .footer-brand .brand-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      color: #E63946;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-brand .brand-description {
+      color: #6C757D;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .social-link {
+      color: #6C757D;
+      font-size: 1.3rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .social-link:hover {
+      color: #E63946;
       transform: translateY(-2px);
+    }
+
+    /* Footer Titles */
+    .footer-title {
+      font-weight: 700;
+      color: #212529;
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Footer Lists */
+    .footer-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .footer-list a {
+      color: #6C757D;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .footer-list a:hover {
+      color: #E63946;
+    }
+
+    /* Contact Section */
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+    }
+
+    .contact-item i {
+      color: #E63946;
+      font-size: 1.1rem;
+      margin-top: 0.2rem;
+      min-width: 16px;
+    }
+
+    .contact-item span {
+      color: #6C757D;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    /* Footer Bottom */
+    .footer-bottom {
+      border-top: 1px solid #DEE2E6;
+      margin-top: 2rem;
+    }
+
+    .footer-bottom-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .copyright {
+      color: #6C757D;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    .footer-bottom-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .footer-bottom-links a {
+      color: #6C757D;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+
+    .footer-bottom-links a:hover {
+      color: #E63946;
+    }
+
+    /* Tablet Responsive */
+    @media (max-width: 992px) {
+      .footer-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+        padding: 3rem 1.5rem 1.5rem;
+      }
+
+      .footer-bottom-content {
+        padding: 1.5rem;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+        padding: 3rem 1.5rem 1.5rem;
+        text-align: center;
+      }
+
+      .footer-brand .brand-title {
+        font-size: 1.8rem;
+        justify-content: center;
+      }
+
+      .footer-brand .brand-description {
+        font-size: 1.1rem;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 1.5rem;
+      }
+
+      .social-links {
+        justify-content: center;
+        gap: 1.5rem;
+      }
+
+      .social-link {
+        font-size: 1.4rem;
+      }
+
+      .footer-title {
+        font-size: 1.4rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .footer-list {
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .footer-list a {
+        font-size: 1.1rem;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .footer-list a:hover {
+        background: #E63946;
+        color: white;
+      }
+
+      .contact-info {
+        align-items: center;
+        gap: 1.2rem;
+      }
+
+      .contact-item {
+        background: rgba(230, 57, 70, 0.08);
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        max-width: 300px;
+        width: 100%;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+      }
+
+      .contact-item i {
+        font-size: 1.2rem;
+        margin-top: 0;
+      }
+
+      .contact-item span {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #212529;
+      }
+
+      .footer-bottom-content {
+        padding: 1.5rem;
+      }
+
+      .copyright {
+        font-size: 1rem;
+      }
+
+      .footer-bottom-links {
+        gap: 1.5rem;
+      }
+
+      .footer-bottom-links a {
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .footer-bottom-links a:hover {
+        background: #E63946;
+        color: white;
+      }
+    }
+
+    /* Small Mobile */
+    @media (max-width: 576px) {
+      .footer-content {
+        padding: 2.5rem 1rem 1rem;
+        gap: 2rem;
+      }
+
+      .footer-brand .brand-title {
+        font-size: 1.6rem;
+      }
+
+      .footer-brand .brand-description {
+        font-size: 1rem;
+      }
+
+      .footer-title {
+        font-size: 1.3rem;
+      }
+
+      .footer-list a {
+        font-size: 1rem;
+      }
+
+      .contact-item {
+        max-width: 280px;
+        padding: 0.8rem 1.2rem;
+      }
+
+      .contact-item span {
+        font-size: 1rem;
+      }
+
+      .footer-bottom-content {
+        padding: 1.2rem 1rem;
+      }
     }
   </style>
 

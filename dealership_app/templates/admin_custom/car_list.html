@@ -1,102 +1,651 @@
 {% extends "admin_custom/base_admin.html" %}
-{% block title %}Car List{% endblock %}
+{% block title %}Car Management - MoeAuto Admin{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <h1><i class="fas fa-car me-3"></i>Car Management</h1>
+    <p>Manage your entire vehicle inventory with powerful tools</p>
+</div>
 
-<!-- ✅ Search + Add Button in one row -->
-<form method="get" class="mb-4">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+<!-- Enhanced Search + Filter + Add Section -->
+<div class="chart-container mb-4">
+    <form method="get" class="mb-0">
+        <div class="row align-items-end">
+            <div class="col-lg-4 col-md-6 mb-3">
+                <label class="form-label fw-bold"><i class="fas fa-search me-2"></i>Search Vehicles</label>
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" 
+                           placeholder="Search by brand, model, title..." value="{{ q }}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-3 mb-3">
+                <label class="form-label fw-bold"><i class="fas fa-filter me-2"></i>Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="available" {% if status == 'available' %}selected{% endif %}>Available</option>
+                    <option value="sold" {% if status == 'sold' %}selected{% endif %}>Sold</option>
+                </select>
+            </div>
+            <div class="col-lg-2 col-md-3 mb-3">
+                <label class="form-label fw-bold"><i class="fas fa-sort me-2"></i>Sort By</label>
+                <select name="sort" class="form-select">
+                    <option value="-created_at" {% if sort == '-created_at' %}selected{% endif %}>Newest First</option>
+                    <option value="created_at" {% if sort == 'created_at' %}selected{% endif %}>Oldest First</option>
+                    <option value="price" {% if sort == 'price' %}selected{% endif %}>Price Low to High</option>
+                    <option value="-price" {% if sort == '-price' %}selected{% endif %}>Price High to Low</option>
+                    <option value="brand" {% if sort == 'brand' %}selected{% endif %}>Brand A-Z</option>
+                </select>
+            </div>
+            <div class="col-lg-4 col-md-12 mb-3">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-warning flex-fill">
+                        <i class="fas fa-filter me-2"></i>Apply Filters
+                    </button>
+                    <a href="{% url 'admin_car_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times"></i>
+                    </a>
+                    <a href="{% url 'admin_car_add' %}" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>Add New Car
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
-        <!-- Search Bar -->
-        <div class="input-group" style="max-width:400px; flex:1;">
-            <input type="text" name="q" class="form-control"
-                   placeholder="Search cars..." value="{{ q }}">
-            <button class="btn btn-outline-primary" type="submit">
-                <i class="fas fa-search"></i>
+<!-- Quick Stats -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="stats-card primary">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6><i class="fas fa-car me-2"></i>Total Cars</h6>
+                    <h2>{{ total_cars }}</h2>
+                </div>
+                <div class="text-primary" style="font-size: 2rem; opacity: 0.3;">
+                    <i class="fas fa-car"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card success">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6><i class="fas fa-check-circle me-2"></i>Available</h6>
+                    <h2>{{ available_cars }}</h2>
+                </div>
+                <div class="text-success" style="font-size: 2rem; opacity: 0.3;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card warning">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6><i class="fas fa-handshake me-2"></i>Sold</h6>
+                    <h2>{{ sold_cars }}</h2>
+                </div>
+                <div class="text-warning" style="font-size: 2rem; opacity: 0.3;">
+                    <i class="fas fa-handshake"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stats-card danger">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6><i class="fas fa-euro-sign me-2"></i>Avg Price</h6>
+                    <h2>{{ avg_price|floatformat:0 }}€</h2>
+                </div>
+                <div class="text-danger" style="font-size: 2rem; opacity: 0.3;">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Cars Table -->
+<div class="chart-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h6><i class="fas fa-list me-2"></i>Vehicle Inventory</h6>
+        <div class="d-flex gap-2 d-none d-lg-flex">
+            <button class="btn btn-sm btn-primary" onclick="toggleView('grid')">
+                <i class="fas fa-th"></i> Grid
+            </button>
+            <button class="btn btn-sm btn-outline-primary" onclick="toggleView('table')">
+                <i class="fas fa-list"></i> Table
             </button>
         </div>
-
-        <!-- Add Car Button -->
-        <a href="{% url 'admin_car_add' %}" class="btn btn-success" style="white-space:nowrap;">
-            <i class="fas fa-plus"></i> Add Car
-        </a>
     </div>
-</form>
-
-<!-- ✅ Cars Table -->
-<div class="card shadow-sm">
-    <div class="card-body p-0">
+    
+    <div id="tableView" class="d-none">
         <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle mb-0" style="font-size:1.05rem;">
-                <thead class="table-dark">
-                    <tr style="height:70px;">
-                        <th style="width:150px;">Image</th>
-                        <th>Brand</th>
-                        <th>Model</th>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">Image</th>
+                        <th>Vehicle Details</th>
+                        <th>Price</th>
+                        <th>Status</th>
                         <th>Created</th>
-                        <th class="text-center">Actions</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for car in cars %}
-                    <tr style="height:100px;">
+                    <tr>
                         <td>
-                            <img src="{{ car.main_image.url }}" alt="Main image"
-                                 style="width:140px;height:90px;object-fit:cover;border-radius:8px;">
+                            {% if car.main_image %}
+                                <img src="{{ car.main_image.url }}" alt="{{ car.title }}" 
+                                     style="width: 100px; height: 70px; object-fit: cover; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            {% else %}
+                                <div class="bg-light d-flex align-items-center justify-content-center rounded" 
+                                     style="width: 100px; height: 70px;">
+                                    <i class="fas fa-car text-muted"></i>
+                                </div>
+                            {% endif %}
                         </td>
-                        <td>{{ car.brand }}</td>
-                        <td>{{ car.model_name }}</td>
-                        <td>{{ car.created_at|date:"Y-m-d" }}</td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_car_edit' car.id %}" class="btn btn-sm btn-primary">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
-                            <a href="{% url 'admin_car_delete' car.id %}" class="btn btn-sm btn-danger"
-                               onclick="return confirm('Are you sure you want to delete this car?');">
-                                <i class="fas fa-trash"></i> Delete
-                            </a>
+                        <td>
+                            <div class="fw-bold mb-1">{{ car.title|truncatechars:30 }}</div>
+                            <small class="text-muted">{{ car.brand.name }} {{ car.model_name.name }}</small><br>
+                            <small class="text-muted">{{ car.year }} • {{ car.fuel_type }} • {{ car.mileage|floatformat:0 }} km</small>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-primary" style="font-size: 1.1rem;">{{ car.display_price }}</div>
+                        </td>
+                        <td>
+                            {% if car.sold %}
+                                <span class="badge bg-success px-3 py-2">
+                                    <i class="fas fa-check me-1"></i>Sold
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning px-3 py-2">
+                                    <i class="fas fa-clock me-1"></i>Available
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ car.created_at|date:"M d, Y" }}<br>{{ car.created_at|time:"H:i" }}</small>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="{% url 'admin_car_edit' car.pk %}" 
+                                   class="btn btn-sm btn-warning" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'frontend_vehicle_detail' car.pk %}" 
+                                   target="_blank" class="btn btn-sm btn-info" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <button class="btn btn-sm btn-danger" 
+                                        onclick="confirmDelete('{{ car.title }}', '{% url 'admin_car_delete' car.pk %}')" 
+                                        title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-4">No cars found.</td>
+                        <td colspan="6" class="text-center py-5">
+                            <i class="fas fa-car text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+                            <div class="mt-3 text-muted">
+                                <h5>No vehicles found</h5>
+                                <p>Try adjusting your search filters or add a new vehicle.</p>
+                                <a href="{% url 'admin_car_add' %}" class="btn btn-primary mt-2">
+                                    <i class="fas fa-plus me-2"></i>Add Your First Car
+                                </a>
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
+    
+    <!-- Universal Grid View (Default for all devices) -->
+    <div id="gridView">
+        <div class="row">
+            {% for car in cars %}
+            <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div class="card h-100 border-0 shadow-sm" style="border-radius: 16px; overflow: hidden; transition: all 0.3s ease;">
+                    <div class="position-relative">
+                        {% if car.main_image %}
+                            <img src="{{ car.main_image.url }}" class="card-img-top" 
+                                 style="height: 200px; object-fit: cover;" alt="{{ car.title }}">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="fas fa-car text-muted" style="font-size: 3rem;"></i>
+                            </div>
+                        {% endif %}
+                        {% if car.sold %}
+                            <span class="badge bg-success position-absolute top-0 end-0 m-2">
+                                <i class="fas fa-check me-1"></i>Sold
+                            </span>
+                        {% else %}
+                            <span class="badge bg-warning position-absolute top-0 end-0 m-2">
+                                <i class="fas fa-clock me-1"></i>Available
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold">{{ car.title|truncatechars:25 }}</h6>
+                        <p class="card-text text-muted small">{{ car.brand.name }} {{ car.model_name.name }}</p>
+                        
+                        <div class="car-specs">
+                          <div class="spec-item">
+                            <div class="spec-icon">
+                              <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="spec-value">{{ car.year }}</div>
+                            <div class="spec-label">Година</div>
+                          </div>
+                          <div class="spec-item">
+                            <div class="spec-icon">
+                              <i class="fas fa-tachometer-alt"></i>
+                            </div>
+                            <div class="spec-value">{{ car.mileage|floatformat:0 }} km</div>
+                            <div class="spec-label">км</div>
+                          </div>
+                          <div class="spec-item">
+                            <div class="spec-icon">
+                              <i class="fas fa-gas-pump"></i>
+                            </div>
+                            <div class="spec-value">{{ car.get_fuel_type_display }}</div>
+                            <div class="spec-label">Гориво</div>
+                          </div>
+                          <div class="spec-item">
+                            <div class="spec-icon">
+                              <i class="fas fa-cog"></i>
+                            </div>
+                            <div class="spec-value">{{ car.get_transmission_display }}</div>
+                            <div class="spec-label">Менувач</div>
+                          </div>
+                        </div>
+                        
+                        <div class="car-footer">
+                            <div class="car-price">{{ car.display_price }}</div>
+                            <div class="d-flex gap-1">
+                                <a href="{% url 'admin_car_edit' car.pk %}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'frontend_vehicle_detail' car.pk %}" target="_blank" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <button class="btn btn-sm btn-danger" 
+                                        onclick="confirmDelete('{{ car.title }}', '{% url 'admin_car_delete' car.pk %}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 
-<!-- ✅ Pagination -->
+<!-- Enhanced Pagination -->
 {% if cars.has_other_pages %}
 <nav aria-label="Page navigation" class="mt-4">
-    <ul class="pagination justify-content-center">
-        {% if cars.has_previous %}
-        <li class="page-item">
-            <a class="page-link" href="?q={{ q }}&page={{ cars.previous_page_number }}">Previous</a>
-        </li>
-        {% endif %}
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="text-muted">
+            Showing {{ cars.start_index }}-{{ cars.end_index }} of {{ cars.paginator.count }} vehicles
+        </div>
+        <ul class="pagination mb-0">
+            {% if cars.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?q={{ q }}&status={{ status }}&sort={{ sort }}&page=1">
+                    <i class="fas fa-angle-double-left"></i>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?q={{ q }}&status={{ status }}&sort={{ sort }}&page={{ cars.previous_page_number }}">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+            </li>
+            {% endif %}
 
-        {% for num in cars.paginator.page_range %}
-        {% if cars.number == num %}
-        <li class="page-item active">
-            <span class="page-link">{{ num }}</span>
-        </li>
-        {% else %}
-        <li class="page-item">
-            <a class="page-link" href="?q={{ q }}&page={{ num }}">{{ num }}</a>
-        </li>
-        {% endif %}
-        {% endfor %}
+            {% for num in cars.paginator.page_range %}
+                {% if cars.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > cars.number|add:'-3' and num < cars.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ q }}&status={{ status }}&sort={{ sort }}&page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
 
-        {% if cars.has_next %}
-        <li class="page-item">
-            <a class="page-link" href="?q={{ q }}&page={{ cars.next_page_number }}">Next</a>
-        </li>
-        {% endif %}
-    </ul>
+            {% if cars.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?q={{ q }}&status={{ status }}&sort={{ sort }}&page={{ cars.next_page_number }}">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?q={{ q }}&status={{ status }}&sort={{ sort }}&page={{ cars.paginator.num_pages }}">
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
 </nav>
 {% endif %}
+
+<script>
+function toggleView(viewType) {
+    // Only allow toggle on desktop (lg and up)
+    if (window.innerWidth < 992) {
+        return; // Don't allow toggle on mobile/tablet
+    }
+    
+    const tableView = document.getElementById('tableView');
+    const gridView = document.getElementById('gridView');
+    const tableBtn = document.querySelector('button[onclick="toggleView(\'table\')"]');
+    const gridBtn = document.querySelector('button[onclick="toggleView(\'grid\')"]');
+    
+    if (viewType === 'grid') {
+        tableView.classList.add('d-none');
+        gridView.classList.remove('d-none');
+        gridView.classList.add('d-block');
+        tableBtn.classList.remove('btn-primary');
+        tableBtn.classList.add('btn-outline-primary');
+        gridBtn.classList.remove('btn-outline-primary');
+        gridBtn.classList.add('btn-primary');
+        localStorage.setItem('carListView', 'grid');
+    } else {
+        tableView.classList.remove('d-none');
+        gridView.classList.add('d-none');
+        gridView.classList.remove('d-block');
+        gridBtn.classList.remove('btn-primary');
+        gridBtn.classList.add('btn-outline-primary');
+        tableBtn.classList.remove('btn-outline-primary');
+        tableBtn.classList.add('btn-primary');
+        localStorage.setItem('carListView', 'table');
+    }
+}
+
+function confirmDelete(carTitle, deleteUrl) {
+    if (confirm(`Are you sure you want to delete "${carTitle}"? This action cannot be undone.`)) {
+        // Create a form and submit it
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = deleteUrl;
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken.value;
+            form.appendChild(csrfInput);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Restore view preference (only on desktop)
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.innerWidth >= 992) {
+        const savedView = localStorage.getItem('carListView');
+        if (savedView === 'table') {
+            toggleView('table');
+        }
+        // Default to grid view if no preference saved
+    }
+    
+    // Add hover effects to cards in grid view
+    const cards = document.querySelectorAll('#gridView .card');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 8px 30px rgba(0,0,0,0.15)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
+        });
+    });
+    
+    // Auto-submit form on filter change
+    const filterSelects = document.querySelectorAll('select[name="status"], select[name="sort"]');
+    filterSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            this.form.submit();
+        });
+    });
+    
+    // Enhanced search with debounce
+    const searchInput = document.querySelector('input[name="q"]');
+    let searchTimeout;
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                // Auto-submit after 500ms of no typing
+                // Uncomment the line below if you want auto-search
+                // this.form.submit();
+            }, 500);
+        });
+    }
+    
+    // Animate stats cards
+    const statsCards = document.querySelectorAll('.stats-card');
+    statsCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+</script>
+
+<style>
+/* Car specs styling for grid view */
+.car-specs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 15px 0;
+    border-top: 1px solid #F1F3F4;
+    border-bottom: 1px solid #F1F3F4;
+}
+
+.spec-item {
+    text-align: center;
+    padding: 8px 4px;
+}
+
+.spec-icon {
+    font-size: 1.2rem;
+    color: var(--primary-red);
+    margin-bottom: 5px;
+}
+
+.spec-value {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+}
+
+.spec-label {
+    font-size: 0.8rem;
+    color: var(--medium-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.car-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.car-price {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-red);
+}
+
+/* Mobile responsive for car specs */
+@media (max-width: 768px) {
+    .car-specs {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 12px;
+    }
+    
+    .spec-item {
+        text-align: center;
+        padding: 6px 4px;
+    }
+    
+    .car-price {
+        font-size: 1.2rem;
+    }
+    
+    /* Improve card layout on tablet */
+    #gridView .col-12 {
+        margin-bottom: 20px;
+    }
+    
+    #gridView .card {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .car-specs {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 10px;
+    }
+    
+    .spec-item {
+        padding: 4px 2px;
+    }
+    
+    .spec-value {
+        font-size: 0.8rem;
+    }
+    
+    .spec-label {
+        font-size: 0.7rem;
+    }
+    
+    .car-price {
+        font-size: 1.1rem;
+    }
+}
+
+/* Mobile-specific enhancements for car grid */
+@media (max-width: 991px) {
+    
+    .mobile-car-specs {
+        background: var(--light-gray);
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+    
+    .mobile-car-specs i {
+        color: var(--primary-red);
+        width: 12px;
+    }
+    
+    /* Improve button layout on mobile */
+    .mobile-car-card .btn {
+        padding: 6px 8px;
+        font-size: 0.9rem;
+    }
+    
+    /* Make search section more mobile-friendly */
+    .chart-container {
+        padding: 20px 15px;
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+    
+    .form-select, .form-control {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+    
+    /* Stats cards mobile improvements */
+    .stats-card h6 {
+        font-size: 0.8rem;
+    }
+    
+    .stats-card h2 {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .mobile-car-card {
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .mobile-car-card .card-body {
+        padding: 15px !important;
+    }
+    
+    .mobile-car-card .card-title {
+        font-size: 0.95rem !important;
+    }
+    
+    .mobile-car-specs {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+    
+    .mobile-car-card .btn {
+        padding: 5px 6px;
+        font-size: 0.85rem;
+    }
+    
+    /* Search section on very small screens */
+    .chart-container {
+        padding: 15px 10px;
+    }
+    
+    .stats-card {
+        padding: 15px;
+        margin-bottom: 10px;
+    }
+    
+    .stats-card h2 {
+        font-size: 1.2rem;
+    }
+}
+</style>
 
 {% endblock %}

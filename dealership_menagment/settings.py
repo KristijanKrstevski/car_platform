@@ -23,9 +23,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-5fy_*5n9wur*vwi&&of3b1ia2c8=st8&wehj(+h^7t+%=ok*na'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['dealership.krstevski.me', 'python.krstevski.me', 'localhost', '127.0.0.1']
+
+# CSRF trusted origins for HTTPS
+CSRF_TRUSTED_ORIGINS = [
+    'https://python.krstevski.me',
+    'https://dealership.krstevski.me',
+]
 
 
 # Application definition
@@ -106,6 +112,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 LOGIN_URL = '/admin/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
+
+# Override Django admin login redirect
+ADMIN_REDIRECT_URL = '/dashboard/'
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'

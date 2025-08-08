@@ -13,8 +13,10 @@ from django.contrib.auth.decorators import login_required
 
 
 # ✅ DASHBOARD HOME
-@login_required
 def admin_dashboard(request):
+    # Check if user is authenticated, if not redirect to admin login
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('/admin/login/?next=/dashboard/')
     total_cars = Car.objects.count()
     total_sold = Car.objects.filter(sold=True).count()
 
@@ -40,39 +42,89 @@ def admin_dashboard(request):
     fuel_labels = [item['fuel_type'] for item in fuel_data]
     fuel_counts = [item['count'] for item in fuel_data]
 
+    # 6. Latest added cars
+    latest_cars = Car.objects.select_related('brand', 'model_name').order_by('-created_at')[:5]
+    
+    # 7. Calculate available cars for the chart
+    available_cars = total_cars - total_sold
+
     return render(request, "admin_custom/dashboard.html", {
         "total_cars": total_cars,
         "total_sold": total_sold,
+        "available_cars": available_cars,
         "avg_price": round(avg_price, 2),
         "avg_price_sold": round(avg_price_sold, 2),
         "inventory_value": inventory_value,
         "avg_price_per_year": round(avg_price_per_year, 2),
         "fuel_labels": fuel_labels,
-        "fuel_labels": fuel_labels,
         "fuel_counts": fuel_counts,
+        "latest_cars": latest_cars,
     })
 
 
 
 # ✅ LIST CARS
-@login_required
 def admin_car_list(request):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('/admin/login/?next=' + request.path)
+    
+    # Get filter parameters
     q = request.GET.get('q', '')
-    cars = Car.objects.all()
+    status = request.GET.get('status', '')
+    sort = request.GET.get('sort', '-created_at')
+    
+    # Base queryset with related objects for optimization
+    cars = Car.objects.select_related('brand', 'model_name').all()
+    
+    # Apply search filter
     if q:
         cars = cars.filter(
             Q(title__icontains=q) |
             Q(brand__name__icontains=q) |
             Q(model_name__name__icontains=q)
         )
-    paginator = Paginator(cars, 10)
+    
+    # Apply status filter
+    if status == 'available':
+        cars = cars.filter(sold=False)
+    elif status == 'sold':
+        cars = cars.filter(sold=True)
+    
+    # Apply sorting
+    if sort:
+        if sort == 'brand':
+            cars = cars.order_by('brand__name', 'model_name__name')
+        else:
+            cars = cars.order_by(sort)
+    else:
+        cars = cars.order_by('-created_at')
+    
+    # Calculate statistics
+    total_cars = Car.objects.count()
+    available_cars = Car.objects.filter(sold=False).count()
+    sold_cars = Car.objects.filter(sold=True).count()
+    avg_price = Car.objects.aggregate(avg=Avg('price'))['avg'] or 0
+    
+    # Pagination
+    paginator = Paginator(cars, 12)  # Show 12 cars per page for better grid layout
     page = request.GET.get('page')
     cars = paginator.get_page(page)
-    return render(request, 'admin_custom/car_list.html', {'cars': cars, 'q': q})
+    
+    return render(request, 'admin_custom/car_list.html', {
+        'cars': cars,
+        'q': q,
+        'status': status,
+        'sort': sort,
+        'total_cars': total_cars,
+        'available_cars': available_cars,
+        'sold_cars': sold_cars,
+        'avg_price': round(avg_price, 2),
+    })
 
 # ✅ ADD CAR
-@login_required
 def admin_car_add(request):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('/admin/login/?next=' + request.path)
     if request.method == "POST":
         car_form = CarModelForm(request.POST, request.FILES)
         image_form = CarImageForm(request.POST, request.FILES)
@@ -114,8 +166,9 @@ def admin_car_add(request):
 
 
 # ✅ EDIT CAR
-@login_required
 def admin_car_edit(request, pk):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('/admin/login/?next=' + request.path)
     car = get_object_or_404(Car, pk=pk)
     images = CarImage.objects.filter(car=car)
 
@@ -161,8 +214,9 @@ def admin_car_edit(request, pk):
 
 
 # ✅ AJAX DELETE IMAGE (No refresh)
-@login_required
 def ajax_delete_car_image(request, pk):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return JsonResponse({"success": False, "error": "Authentication required"}, status=401)
     if request.method == "POST" and request.headers.get("x-requested-with") == "XMLHttpRequest":
         img = get_object_or_404(CarImage, id=pk)
         car_id = img.car.id  # CarImage must have a ForeignKey to Car
@@ -174,8 +228,9 @@ def ajax_delete_car_image(request, pk):
     return JsonResponse({"success": False}, status=400)
 
 # ✅ DELETE CAR
-@login_required
 def admin_car_delete(request, pk):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('/admin/login/?next=' + request.path)
     car = get_object_or_404(Car, pk=pk)
     extra_images = CarImage.objects.filter(car=car)
     for img in extra_images:
@@ -188,8 +243,9 @@ def admin_car_delete(request, pk):
     messages.success(request, "🗑 Car and all its images deleted!")
     return redirect("admin_car_list")
 
-@login_required
 def ajax_load_models(request):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return JsonResponse({"error": "Authentication required"}, status=401)
     bid = request.GET.get('brand')
     qs = CarModel.objects.filter(brand_id=bid).values('id','name')
     return JsonResponse(list(qs), safe=False)
